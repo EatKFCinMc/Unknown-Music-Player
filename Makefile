@@ -4,7 +4,7 @@ SONGLIST = songlist-song songlist-list
 KEYBOARD = keyboard-keyboard
 UI = ui-common
 
-CFLAGS = -Wall -ldl -lpthread -lm -ltag -std=c++20
+CFLAGS = -Wall -ldl -lpthread -lm -ltag -std=c++20 -I ./include
 
 ump: main $(SONGLIST) $(KEYBOARD) $(UI)
 	g++ -o ./ump $(BUILD)/*.o $(CFLAGS)

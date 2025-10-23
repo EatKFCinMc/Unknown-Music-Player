@@ -7,7 +7,7 @@
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
 #define MINIAUDIO_IMPLEMENTATION
-#include <miniaudio/miniaudio.h>
+#include "miniaudio/miniaudio.h"
 
 #include <string>
 #include <string_view>

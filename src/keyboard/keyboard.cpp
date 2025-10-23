@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include <string>
 #include <termios.h>
-#include <miniaudio/miniaudio.h>
+#include "miniaudio/miniaudio.h"
 
 #include "../ui/common.h"
 
