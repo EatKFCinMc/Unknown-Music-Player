@@ -1,11 +1,15 @@
+#include "keyboard.h"
+
 #include <unistd.h>
 #include <cstdio>
 #include <fcntl.h>
-#include <string>
 #include <termios.h>
+
 #include "miniaudio/miniaudio.h"
 
-#include "../ui/common.h"
+#include "../event/events.h"
+
+#include "../logger/log.h"
 
 int kbhit() {
     termios oldt, newt;
@@ -45,43 +49,51 @@ int getch() {
     return ch;
 }
 
-void playing(std::string filePath) {
-    ma_result result;
-    ma_engine engine;
-
-    result = ma_engine_init(NULL, &engine);
-    if (result != MA_SUCCESS) {
-        return;
-    }
-
-    ma_sound sound;
-    result = ma_sound_init_from_file(&engine, filePath.c_str(), 0, NULL, NULL, &sound);
-    if (result != MA_SUCCESS) {
-        return;
-    }
-    printAt(2, 3, "Playing: " + filePath);
-    refreshBuffer();
-
-    ma_sound_start(&sound);
-
-    bool flagPlaying = true;
-    ma_uint64 cursor = ma_sound_get_length_in_pcm_frames(&sound, &cursor), total = ma_sound_get_length_in_pcm_frames(&sound, &total);
-    while (cursor <= total) {
+void keyboard_listener() {
+    while (!TERMINATE) {
         if (kbhit()) {
             char c = getch();
-            if (c == 'p') {
-                if (flagPlaying) {
-                    ma_sound_stop(&sound);
-                    flagPlaying = false;
-                } else {
-                    ma_sound_start(&sound);
-                    flagPlaying = true;
-                }
+            switch (c){
+                case 'q':
+                    TERMINATE = true;
+                    break;
+                case 'p':
+                    PAUSE = !PAUSE;
+                    break;
+                case ' ':
+                    PAUSE = !PAUSE;
+                    break;
+                case 27:
+                    array_input();
+                    break;
+                default:
+                    break;
             }
-            else if (c == 'q') break;
         }
     }
+}
 
-    ma_sound_uninit(&sound);
-    ma_engine_uninit(&engine);
+void array_input() {
+    if (kbhit()) {
+        char first = getch();
+        if (first == '[') {
+            if (kbhit()) {
+                char second = getch();
+                switch (second) {
+                    case 'A': // Up arrow key pressed
+                        break;
+                    case 'B': // Down arrow key pressed
+                        break;
+                    case 'C': // Right arrow key pressed
+                        NEXT = true;
+                        break;
+                    case 'D': // Left arrow key pressed
+                        PREV = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
 }

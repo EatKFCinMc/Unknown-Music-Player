@@ -45,3 +45,5 @@ ump
 test/*
 build/*
 cmake-build-debug
+code_test/*
+*.log

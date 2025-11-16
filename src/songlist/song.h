@@ -1,5 +1,5 @@
-#ifndef UNKNOWNMUSICPLAYER_SONG_H
-#define UNKNOWNMUSICPLAYER_SONG_H
+#ifndef SONG_H
+#define SONG_H
 
 #include <string>
 
@@ -15,6 +15,7 @@ public:
     bool verifyPath();
     bool getMetaData();
     void play();
+    bool is_available();
 };
 
-#endif //UNKNOWNMUSICPLAYER_SONG_H
+#endif //SONG_H

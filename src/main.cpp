@@ -3,11 +3,18 @@
 #include <sys/ioctl.h>
 #include <filesystem>
 #include <fcntl.h>
+#include <thread>
 
 #include "ui/common.h"
 
 #include "songlist/song.h"
 #include "songlist/list.h"
+
+#include "keyboard/keyboard.h"
+
+#include "event/events.h"
+
+#include "logger/log.h"
 
 
 int tall, wide;
@@ -21,14 +28,17 @@ void getWinSize(int &row, int &col) {
 
 
 int main(int argc, char *argv[]) {
-    getWinSize(tall, wide);
     std::string fileStr;
     if (argc == 2) fileStr = argv[1];
     else {
         printf("Usage: ump <audio_file_path>\n");
         return 0;
     }
-    // else fileStr = "./test/Alea jacta est! (xi Remix) - BlackY.mp3";
+
+    getWinSize(tall, wide);
+    log_init();
+    std::thread keyboard_thread(keyboard_listener);
+    keyboard_thread.detach();
 
     int col, row;
     std::string s = "Just Listen";
@@ -40,22 +50,19 @@ int main(int argc, char *argv[]) {
     printAt(col / 2 - s.length() / 2, row / 2, s, 96, true);
     refreshBuffer();
 
-    drawBox(tall, wide, 1, 1);
-    printAt(2, 2, "Controls: 'p' = Play/Pause, 'q' = Quit");
-    if (std::filesystem::is_directory(fileStr)) {
+    drawBox(tall, wide, 1, 1, 96);
+    printAt(2, 2, "Controls: 'p' = Play/Pause, 'q' = Quit, Arrow = next / prev");
+    if (std::filesystem::exists(fileStr)) {
         Playlist playlist(fileStr);
+        // std::thread event_thread(event_listener);
+        // event_thread.detach();
         playlist.playFromList();
     } else {
-        Song song(fileStr);
-        song.play();
+        printAt(2, 3, "Error: No such file or directory");
+        sleep(3);
     }
 
     clearScr();
-    s = "Exiting in 2 seconds...";
-    printAt(col / 2 - s.length() / 2, row / 2, s, 94, true);
-    refreshBuffer();
-    sleep(2);
-
     exitAltScr();
     return 0;
 }

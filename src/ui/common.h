@@ -1,5 +1,5 @@
-#ifndef UNKNOWNMUSICPLAYER_COMMON_H
-#define UNKNOWNMUSICPLAYER_COMMON_H
+#ifndef COMMON_H
+#define COMMON_H
 
 #include <string>
 
@@ -13,4 +13,4 @@ void refreshBuffer();
 void hideCursor();
 void showCursor();
 
-#endif
+#endif //COMMON_H

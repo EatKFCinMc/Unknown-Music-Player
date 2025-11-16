@@ -1,12 +1,15 @@
 SRC = ./src
 BUILD = ./build
+
 SONGLIST = songlist-song songlist-list
 KEYBOARD = keyboard-keyboard
 UI = ui-common
+EVENT = event-events
+LOGGER = logger-log
 
 CFLAGS = -Wall -ldl -lpthread -lm -ltag -std=c++20 -I ./include
 
-ump: main $(SONGLIST) $(KEYBOARD) $(UI)
+ump: main $(SONGLIST) $(KEYBOARD) $(UI) $(EVENT) $(LOGGER)
 	g++ -o ./ump $(BUILD)/*.o $(CFLAGS)
 
 main: $(SRC)/main.cpp
@@ -23,6 +26,12 @@ songlist-song: $(SRC)/songlist/song.cpp
 
 songlist-list: $(SRC)/songlist/list.cpp
 	g++ -c $(SRC)/songlist/list.cpp -o $(BUILD)/list.o $(CFLAGS)
+
+event-events: $(SRC)/event/events.cpp
+	g++ -c $(SRC)/event/events.cpp -o $(BUILD)/events.o $(CFLAGS)
+
+logger-log: $(SRC)/logger/log.cpp
+	g++ -c $(SRC)/logger/log.cpp -o $(BUILD)/log.o $(CFLAGS)
 
 clean:
 	rm -f $(BUILD)/*.o ump

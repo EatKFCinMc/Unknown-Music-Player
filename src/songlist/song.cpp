@@ -1,17 +1,18 @@
-#include "song.h"
-
-#include "../ui/common.h"
-
-#include "../keyboard/keyboard.h"
-
+#define MINIAUDIO_IMPLEMENTATION
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
-#define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio/miniaudio.h"
 
 #include <string>
 #include <string_view>
 #include <filesystem>
+
+#include "song.h"
+
+#include "../ui/common.h"
+
+#include "../event/events.h"
+
 
 std::string suffixes[] = {".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a"};
 
@@ -28,17 +29,13 @@ Song::Song(std::string file, bool inlist) {
 bool Song::verifyPath() {
     if (filePath.empty()) return false;
     if (!std::filesystem::exists(filePath)) return false;
-    bool inIt = false;
     for (auto suf : suffixes) {
         if (filePath.ends_with(suf)) {
-            inIt = true;
-            break;
+            available = true;
+            return true;
         }
     }
-    if (!inIt) return false;
-
-    available = true;
-    return true;
+    return false;
 }
 
 
@@ -70,31 +67,41 @@ void Song::play() {
     if (result != MA_SUCCESS) {
         return;
     }
-    clearLine(3, 2, title.length() + 50);
-    refreshBuffer();
     printAt(2, 3, "Playing: " + title);
     refreshBuffer();
 
     ma_sound_start(&sound);
 
     bool flagPlaying = true;
-    ma_uint64 cursor = ma_sound_get_length_in_pcm_frames(&sound, &cursor), total = ma_sound_get_length_in_pcm_frames(&sound, &total);
+    ma_uint64 cursor = ma_sound_get_length_in_pcm_frames(&sound, &cursor);
+    ma_uint64 total = ma_sound_get_length_in_pcm_frames(&sound, &total);
     while (cursor <= total) {
-        if (kbhit()) {
-            char c = getch();
-            if (c == 'p') {
-                if (flagPlaying) {
-                    ma_sound_stop(&sound);
-                    flagPlaying = false;
-                } else {
-                    ma_sound_start(&sound);
-                    flagPlaying = true;
-                }
+        if (PAUSE) {
+            if (flagPlaying) {
+                ma_sound_stop(&sound);
+                flagPlaying = false;
+            } else {
+                ma_sound_start(&sound);
+                flagPlaying = true;
             }
-            else if (c == 'q') break;
+        }
+        if (NEXT || PREV) {
+            ma_sound_stop(&sound);
+            break;
+        }
+        if (TERMINATE) {
+            ma_sound_stop(&sound);
+            break;
         }
     }
 
     ma_sound_uninit(&sound);
     ma_engine_uninit(&engine);
+    clearLine(3, 2, title.length() + 9);
+    refreshBuffer();
 }
+
+bool Song::is_available() {
+    return available;
+}
+

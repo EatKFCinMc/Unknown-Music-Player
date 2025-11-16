@@ -1,10 +1,9 @@
-#ifndef UNKNOWNMUSICPLAYER_KEYBOARD_H
-#define UNKNOWNMUSICPLAYER_KEYBOARD_H
-
-#include <string>
+#ifndef KEYBOARD_H
+#define KEYBOARD_H
 
 int kbhit();
 int getch();
-void playing(std::string filePath);
+void keyboard_listener();
+void array_input();
 
-#endif //UNKNOWNMUSICPLAYER_KEYBOARD_H
+#endif //KEYBOARD_H

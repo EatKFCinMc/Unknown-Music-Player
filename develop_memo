@@ -1,0 +1,22 @@
+/src
+    /event
+        events.cpp
+            Containing every type of event as a global variable.
+    /keyboard
+        keyboard.cpp
+            Handling any keyboard input
+    /logger
+        log.cpp
+            Logging
+    /play
+        Nothing right now
+    /songlist
+        list.cpp
+            Containing the class of song list. Handling stream control like play next
+        song.cpp
+            Containing the class of a single sone. Handling music play
+    /ui
+        common.cpp
+            What is that?
+    main.cpp
+        Main part of the program. Handling enter and exit of the program and temporarily handling getWinSize
