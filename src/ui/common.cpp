@@ -2,19 +2,15 @@
 
 #include <stdio.h>
 
-// const char* downRight = "┏";
-// const char* upRight = "┗";
-// const char* downLeft = "┓";
-// const char* upLeft = "┛";
-// const char* horiLine = "━";
-// const char* vertiLine = "┃";
+#include "../event/globalVar.h"
 
-const char* downRight = "┌";
-const char* upRight = "└";
-const char* downLeft = "┐";
-const char* upLeft = "┘";
-const char* horiLine = "─";
-const char* vertiLine = "│";
+
+// const char* downRight = "┌";
+// const char* upRight = "└";
+// const char* downLeft = "┐";
+// const char* upLeft = "┘";
+// const char* horiLine = "─";
+// const char* vertiLine = "│";
 
 
 void enterAltScr() { printf("\033[?1049h"); }
