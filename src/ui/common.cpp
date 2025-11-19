@@ -2,12 +2,19 @@
 
 #include <stdio.h>
 
-const char* downRight = "┏";
-const char* upRight = "┗";
-const char* downLeft = "┓";
-const char* upLeft = "┛";
-const char* horiLine = "━";
-const char* vertiLine = "┃";
+// const char* downRight = "┏";
+// const char* upRight = "┗";
+// const char* downLeft = "┓";
+// const char* upLeft = "┛";
+// const char* horiLine = "━";
+// const char* vertiLine = "┃";
+
+const char* downRight = "┌";
+const char* upRight = "└";
+const char* downLeft = "┐";
+const char* upLeft = "┘";
+const char* horiLine = "─";
+const char* vertiLine = "│";
 
 
 void enterAltScr() { printf("\033[?1049h"); }
@@ -36,20 +43,6 @@ void printAt(int col, int row, const std::string &s, int color, bool border) {
         printf(upLeft);
 		printf("\033[0m");
     }
-}
-
-void drawBox(int tall, int wide, int ori_col, int ori_row, int color){
-    printf("\033[%dm\033[%d;%dH%s", color, ori_row, ori_col, downRight);
-    for (int i = 0; i < wide - 2; i++) printf(horiLine);
-    printf(downLeft);
-    for (int i = 1; i < tall - 1; i++) {
-        printf("\033[%d;%dH%s", ori_row + i, ori_col, vertiLine);
-        printf("\033[%d;%dH%s", ori_row + i, ori_col + wide - 1, vertiLine);
-    }
-    printf("\033[%d;%dH%s", ori_row + tall - 1, ori_col, upRight);
-    for (int i = 0; i < wide - 2; i++) printf(horiLine);
-    printf(upLeft);
-    printf("\033[0m");
 }
 
 void refreshBuffer() { fflush(stdout); }
