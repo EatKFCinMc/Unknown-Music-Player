@@ -3,7 +3,10 @@
 #include <chafa/chafa.h>
 #include <filesystem>
 #include <taglib/flacfile.h>
-#include <taglib/flacpicture.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/attachedpictureframe.h>
 #include <fstream>
 #include <typeinfo>
 
@@ -29,20 +32,32 @@ void get_pixels(std::vector<guint8> &pixels, int &width, int &height, int &chann
 int main() {
     // get cover picture
     string path = "./code_test/cover.jpg";
-    string m_path = "./test/acta est fabula, plaudite (feat. Irissu, mrcool909090 & Cheryl Stelli) - A-Saph,Irissu,mrcool909090.flac";
+    // string m_path = "./test/acta est fabula, plaudite (feat. Irissu, mrcool909090 & Cheryl Stelli) - A-Saph,Irissu,mrcool909090.flac";
+    string m_path = "./test/Alea jacta est! (xi Remix) - BlackY.mp3";
 
-    TagLib::FLAC::File file(m_path.c_str());
-    auto pictures = file.pictureList();
-    if (pictures.isEmpty())
-        return 0;
-    auto *pic = pictures[0];
+    // TagLib::FLAC::File file(m_path.c_str());
+    // auto pictures = file.pictureList();
+    // if (pictures.isEmpty())
+    //     return 0;
+    // auto *pic = pictures[0];
+    //
+    // // std::ofstream out("./code_test/cover.jpg", std::ios::binary);
+    // // out.write(pic->data().data(), pic->data().size());
+    // TagLib::ByteVector raw = pic->data();
+    // int d_size = raw.size();
+    //
+    // unsigned char *pic_data = (unsigned char*)raw.data();
 
-    // std::ofstream out("./code_test/cover.jpg", std::ios::binary);
-    // out.write(pic->data().data(), pic->data().size());
-    TagLib::ByteVector raw = pic->data();
-    int d_size = raw.size();
+    TagLib::MPEG::File file(m_path.c_str());
+    const TagLib::ID3v2::Tag *tag = file.ID3v2Tag();
+    const TagLib::ID3v2::FrameList frames = tag->frameList("APIC");
+    const auto *PicFrame = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frames[0]);
 
-    unsigned char *pic_data = (unsigned char*)raw.data();
+    auto raw = PicFrame->picture();
+    const auto *pic_data = reinterpret_cast<unsigned char *>(raw.data());
+    const int d_size = static_cast<int>(raw.size());
+    cout<<d_size<<endl;
+
 
     // load cover picture
     int img_w, img_h, channels;
@@ -50,7 +65,7 @@ int main() {
     unsigned char* img = stbi_load_from_memory(pic_data, d_size, &img_w, &img_h, &channels, 0);
 
     cout<<img_w<<" "<<img_h<<" "<<channels<<endl;
-    std::vector<guint8> pixels(img, img + img_w * img_h * channels);
+    std::vector pixels(img, img + img_w * img_h * channels);
     guint8 *pixel_ptr = pixels.data();
 
     float ratio = float(img_w) / img_h;
