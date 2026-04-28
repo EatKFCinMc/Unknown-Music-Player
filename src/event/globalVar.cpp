@@ -10,3 +10,4 @@ size_t term_width = 0;
 size_t theme_color = 0;
 std::string term_name = "";
 size_t lb_width = 0;
+bool cover_drawing = false;

@@ -22,6 +22,8 @@ extern size_t lb_width;
 
 
 
+// flag
+extern bool cover_drawing;
 
 // characters
 

@@ -8,8 +8,8 @@
 #include "miniaudio/miniaudio.h"
 
 #include "../event/events.h"
-
 #include "../logger/log.h"
+#include "../event/globalVar.h"
 
 int kbhit() {
     termios oldt, newt;
@@ -51,6 +51,7 @@ int getch() {
 
 void keyboard_listener() {
     while (!TERMINATE) {
+        if (cover_drawing) continue;
         if (kbhit()) {
             char c = getch();
             switch (c){

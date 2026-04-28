@@ -73,8 +73,7 @@ void init(const std::string &dir = "") {
     keyboard_thread.detach();
 
 
-    if (std::filesystem::is_regular_file(dir))
-        displayCover(2, 2, dir);
+    displayCover(2, 2, "/home/Empty/Project/unknownMusicPlayer/test/Alea jacta est! (xi Remix) - BlackY.mp3");
 
     printAt(lb_width + 3, 2, "Controls: 'p' or space = Play/Pause, 'q' = Quit, Arrow = next / prev");
     if (std::filesystem::exists(dir)) {
