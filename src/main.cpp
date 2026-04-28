@@ -4,7 +4,6 @@
 #include <filesystem>
 #include <fcntl.h>
 #include <thread>
-#include <oneapi/tbb/info.h>
 
 #include "ui/common.h"
 #include "ui/frame.h"
@@ -19,14 +18,14 @@
 
 #include "logger/log.h"
 
+#include "cover/showCover.h"
+
 
 int tall, wide;
 
-void getWinSize(int &row, int &col) {
+void getWinSize() {
     winsize w{};
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    row = w.ws_row;
-    col = w.ws_col;
     term_height = w.ws_row;
     term_width = w.ws_col;
 }
@@ -38,38 +37,54 @@ void init_globalVar() {
     album = "";
     total_time = 0;
     current_time = 0;
-    term_height = 0;
-    term_width = 0;
+    getWinSize();
     theme_color = 0;
+    get_term_name();
+    lb_width = term_width / 3;
+
+    std::string msg = std::string("Global variables initialization complete:\n") +
+    "term_height = " + std::to_string(term_height) + "\n" +
+    "term_width = " + std::to_string(term_width) + "\n" +
+    "term_name = " + term_name + "\n" +
+    "lb_width = " + std::to_string(lb_width);
+    logger(msg);
 }
 
 
-void init(const std::string &dir) {
-    init_globalVar();
-    getWinSize(tall, wide);
-    log_init();
-    std::thread keyboard_thread(keyboard_listener);
-    keyboard_thread.detach();
-
-    int col, row;
-    std::string s = "Just Listen";
+void init_window() {
     enterAltScr();
     clearScr();
     hideCursor();
 
-    getWinSize(row, col);
-    printAt(col / 2 - s.length() / 2, row / 2, s, 96, true);
-    refreshBuffer();
+    drawBorder();
+    drawLeftBox();
 
-    draw_border();
-    printAt(2, 2, "Controls: 'p' or space = Play/Pause, 'q' = Quit, Arrow = next / prev");
+    refreshBuffer();
+}
+
+
+void init(const std::string &dir = "") {
+    std::ios::sync_with_stdio(true);
+    log_init();
+    init_globalVar();
+    init_window();
+
+    std::thread keyboard_thread(keyboard_listener);
+    keyboard_thread.detach();
+
+
+    if (std::filesystem::is_regular_file(dir))
+        displayCover(2, 2, dir);
+
+    printAt(lb_width + 3, 2, "Controls: 'p' or space = Play/Pause, 'q' = Quit, Arrow = next / prev");
     if (std::filesystem::exists(dir)) {
         Playlist playlist(dir);
         playlist.playFromList();
     } else {
-        printAt(2, 3, "Error: No such file or directory");
+        printAt(lb_width + 3, 3, "Error: No such file or directory");
         sleep(3);
     }
+
 }
 
 
@@ -83,7 +98,7 @@ int main(int argc, char *argv[]) {
 
     init(fileStr);
 
-    clearScr();
+    showCursor();
     exitAltScr();
     return 0;
 }

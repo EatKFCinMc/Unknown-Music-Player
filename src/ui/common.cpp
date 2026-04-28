@@ -1,8 +1,11 @@
 #include "common.h"
 
 #include <stdio.h>
+#include <iostream>
 
 #include "../event/globalVar.h"
+
+using namespace std;
 
 
 // const char* downRight = "┌";
@@ -24,19 +27,19 @@ void clearLine(int row, int col, int len) {
     for (int i = 0; i < len; i++) printf(" ");
 }
 
-void printAt(int col, int row, const std::string &s, int color, bool border) {
-    printf("\033[%dm\033[%d;%dH%s\033[0m", color, row, col, s.c_str());
+void printAt(size_t col, size_t row, const std::string &s, size_t color, bool border) {
+    printf("\033[%lum\033[%lu;%luH%s\033[0m", color, row, col, s.c_str());
 
 	if (border) {
 		int len = s.length();
-        printf("\033[%dm\033[%d;%dH%s", color, row - 1, col - 1, downRight);
-        for (int i = 0; i < len; i++) printf(horiLine);
-        printf(downLeft);
-        printf("\033[%d;%dH%s", row, col - 1, vertiLine);
-        printf("\033[%d;%dH%s", row, col + len, vertiLine);
-        printf("\033[%d;%dH%s", row + 1, col - 1, upRight);
-        for (int i = 0; i < len; i++) printf(horiLine);
-        printf(upLeft);
+        printf("\033[%lum\033[%lu;%luH%s", color, row - 1, col - 1, downRight);
+        for (int i = 0; i < len; i++) cout<<horiLine;
+        cout<<downLeft;
+        printf("\033[%lu;%luH%s", row, col - 1, vertiLine);
+        printf("\033[%lu;%luH%s", row, col + len, vertiLine);
+        printf("\033[%lu;%luH%s", row + 1, col - 1, upRight);
+        for (int i = 0; i < len; i++) cout<<horiLine;
+        cout<<upLeft;
 		printf("\033[0m");
     }
 }

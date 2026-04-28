@@ -58,17 +58,13 @@ void Song::play() {
     ma_engine engine;
 
     result = ma_engine_init(NULL, &engine);
-    if (result != MA_SUCCESS) {
+    if (result != MA_SUCCESS)
         return;
-    }
 
     ma_sound sound;
     result = ma_sound_init_from_file(&engine, filePath.c_str(), 0, NULL, NULL, &sound);
-    if (result != MA_SUCCESS) {
+    if (result != MA_SUCCESS)
         return;
-    }
-    printAt(2, 3, "Playing: " + title);
-    refreshBuffer();
 
     ma_sound_start(&sound);
 
@@ -97,8 +93,6 @@ void Song::play() {
 
     ma_sound_uninit(&sound);
     ma_engine_uninit(&engine);
-    clearLine(3, 2, title.length() + 9);
-    refreshBuffer();
 }
 
 bool Song::is_available() {

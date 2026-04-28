@@ -64,7 +64,7 @@ void keyboard_listener() {
                     PAUSE = !PAUSE;
                     break;
                 case 27:
-                    array_input();
+                    arrow_input();
                     break;
                 default:
                     break;
@@ -73,7 +73,7 @@ void keyboard_listener() {
     }
 }
 
-void array_input() {
+void arrow_input() {
     if (kbhit()) {
         char first = getch();
         if (first == '[') {

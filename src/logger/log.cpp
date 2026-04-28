@@ -10,11 +10,11 @@ void log_init() {
         std::filesystem::remove("ump.log");
 }
 
-void logger(const char *message) {
+void logger(const std::string &message) {
     // Simple logging to a file
     if (LOGGER_DISABLED) return;
     FILE *logFile = fopen("ump.log", "a");
     if (logFile != NULL)
-        fprintf(logFile, "%s\n", message);
+        fprintf(logFile, "%s\n", message.c_str());
     fclose(logFile);
 }

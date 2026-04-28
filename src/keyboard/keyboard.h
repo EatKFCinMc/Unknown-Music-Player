@@ -4,6 +4,6 @@
 int kbhit();
 int getch();
 void keyboard_listener();
-void array_input();
+void arrow_input();
 
 #endif //KEYBOARD_H

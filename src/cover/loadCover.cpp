@@ -1,4 +1,4 @@
-#include "loadPic.h"
+#include "loadCover.h"
 
 #include <taglib/flacfile.h>
 #include <taglib/flacpicture.h>
@@ -14,7 +14,7 @@
 
 
 
-std::vector<guint8> getCoverRawData(std::string &path, int &width, int &height, int &channels) {
+stbi_uc* getCoverRawData(const std::string path, int &width, int &height, int &channels) {
     if (path.ends_with("flac"))
         return getFlacCover(path, width, height, channels);
     if (path.ends_with("mp3"))
@@ -25,7 +25,7 @@ std::vector<guint8> getCoverRawData(std::string &path, int &width, int &height, 
 }
 
 
-std::vector<guint8> getFlacCover(const std::string &path, int &width, int &height, int &channels) {
+stbi_uc* getFlacCover(const std::string &path, int &width, int &height, int &channels) {
     TagLib::FLAC::File file(path.c_str());
     if (!file.isValid()) return {};
     auto pictures = file.pictureList();
@@ -36,17 +36,17 @@ std::vector<guint8> getFlacCover(const std::string &path, int &width, int &heigh
     TagLib::ByteVector raw = pic->data();
     if (raw.isEmpty()) return {};
     const int d_size = static_cast<int>(raw.size());
-    const auto pic_data = reinterpret_cast<unsigned char *>(raw.data());
+    const auto pic_data = reinterpret_cast<stbi_uc*>(raw.data());
 
-    unsigned char* img = stbi_load_from_memory(pic_data, d_size, &width, &height, &channels, 0);
+    stbi_uc *img = stbi_load_from_memory(pic_data, d_size, &width, &height, &channels, 0);
     if (img == nullptr) return {};
-    std::vector pixels(img, img + width * height * channels);
+    // std::vector pixels(img, img + width * height * channels);
 
-    return pixels;
+    return img;
 }
 
 
-std::vector<guint8> getMp3Cover(const std::string &path, int &width, int &height, int &channels) {
+stbi_uc* getMp3Cover(const std::string &path, int &width, int &height, int &channels) {
     TagLib::MPEG::File file(path.c_str());
     const TagLib::ID3v2::Tag *tag = file.ID3v2Tag();
     if (tag == nullptr) return {};
@@ -57,17 +57,17 @@ std::vector<guint8> getMp3Cover(const std::string &path, int &width, int &height
 
     auto raw = PicFrame->picture();
     if (raw.isEmpty()) return {};
-    const auto *pic_data = reinterpret_cast<unsigned char *>(raw.data());
+    const auto pic_data = reinterpret_cast<unsigned char *>(raw.data());
     const int d_size = static_cast<int>(raw.size());
 
     unsigned char* img = stbi_load_from_memory(pic_data, d_size, &width, &height, &channels, 0);
     if (img == nullptr) return {};
-    std::vector pixels(img, img + width * height * channels);
+    // std::vector pixels(img, img + width * height * channels);
 
-    return pixels;
+    return img;
 }
 
 
-std::vector<guint8> getOggCover(const std::string &path, int &width, int &height, int &channels) {
-    return {};
+stbi_uc* getOggCover(const std::string &path, int &width, int &height, int &channels) {
+    return nullptr;
 }

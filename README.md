@@ -25,8 +25,7 @@ Are you expecting for a installation guide? Just use make and run it in the dire
 
 Goals
 --------
-- [x] Make a BETTER TUI
-- [ ] Make a EVEN BETTER TUI
+- [ ] Make a usable TUI
 - [x] Support play from directory
 - [ ] Have a frame
 - [ ] Support mpris

@@ -9,12 +9,13 @@
 #include <taglib/attachedpictureframe.h>
 #include <fstream>
 #include <typeinfo>
+#include <string>
+#include <thread>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image/stb_image.h"
 
 using namespace std;
-
 
 void get_pixels(std::vector<guint8> &pixels, int &width, int &height, int &channels, const string &path) {
     unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -29,89 +30,117 @@ void get_pixels(std::vector<guint8> &pixels, int &width, int &height, int &chann
     stbi_image_free(data);
 }
 
-int main() {
-    // get cover picture
-    string path = "./code_test/cover.jpg";
-    // string m_path = "./test/acta est fabula, plaudite (feat. Irissu, mrcool909090 & Cheryl Stelli) - A-Saph,Irissu,mrcool909090.flac";
-    string m_path = "./test/Alea jacta est! (xi Remix) - BlackY.mp3";
 
-    // TagLib::FLAC::File file(m_path.c_str());
-    // auto pictures = file.pictureList();
-    // if (pictures.isEmpty())
-    //     return 0;
-    // auto *pic = pictures[0];
-    //
-    // // std::ofstream out("./code_test/cover.jpg", std::ios::binary);
-    // // out.write(pic->data().data(), pic->data().size());
-    // TagLib::ByteVector raw = pic->data();
-    // int d_size = raw.size();
-    //
-    // unsigned char *pic_data = (unsigned char*)raw.data();
+stbi_uc* getFlacCover(const std::string &path, int &width, int &height, int &channels) {
+    TagLib::FLAC::File file(path.c_str());
+    if (!file.isValid()) return {};
+    auto pictures = file.pictureList();
+    if (pictures.isEmpty()) return {};
+    const auto *pic = pictures[0];
+    if (pic == nullptr) return {};
 
-    TagLib::MPEG::File file(m_path.c_str());
-    const TagLib::ID3v2::Tag *tag = file.ID3v2Tag();
-    const TagLib::ID3v2::FrameList frames = tag->frameList("APIC");
-    const auto *PicFrame = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frames[0]);
-
-    auto raw = PicFrame->picture();
-    const auto *pic_data = reinterpret_cast<unsigned char *>(raw.data());
+    TagLib::ByteVector raw = pic->data();
+    if (raw.isEmpty()) return {};
     const int d_size = static_cast<int>(raw.size());
-    cout<<d_size<<endl;
+    const auto pic_data = reinterpret_cast<stbi_uc*>(raw.data());
+
+    stbi_uc *img = stbi_load_from_memory(pic_data, d_size, &width, &height, &channels, 0);
+    if (img == nullptr) return {};
+    // std::vector pixels(img, img + width * height * channels);
+
+    return img;
+}
 
 
-    // load cover picture
+stbi_uc* getCoverRawData(const std::string path, int &width, int &height, int &channels) {
+    if (path.ends_with("flac"))
+        return getFlacCover(path, width, height, channels);
+    return nullptr;
+}
+
+
+void send_kitty_image(const std::string& encoded, size_t width,
+    size_t height, int format, size_t display_cols, size_t display_rows) {
+
+    const size_t chunk_size = 4096;
+
+    size_t pos = 0;
+    bool first = true;
+
+    while (pos < encoded.size()) {
+        size_t n = std::min(chunk_size, encoded.size() - pos);
+        bool more = pos + n < encoded.size();
+
+        if (first) {
+            std::cout
+                << "\x1b_G"
+                << "f=" << format
+                << ",a=T"
+                << ",s=" << width
+                << ",v=" << height
+                << ",c=" << display_cols
+                << ",r=" << display_rows
+                << ",m=" << (more ? 1 : 0)
+                << ";"
+                << encoded.substr(pos, n)
+                << "\x1b\\";
+            first = false;
+        } else {
+            std::cout
+                << "\x1b_G"
+                << "m=" << (more ? 1 : 0)
+                << ";"
+                << encoded.substr(pos, n)
+                << "\x1b\\";
+        }
+        pos += n;
+    }
+
+    std::cout << std::flush;
+}
+
+
+static const char b64_table[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+std::string base64_encode(const unsigned char *data, size_t len)
+{
+    std::string out;
+    int val = 0, valb = -6;
+    for (size_t i = 0; i < len; i++) {
+        val = (val << 8) + data[i];
+        valb += 8;
+        while (valb >= 0) {
+            out.push_back(b64_table[(val >> valb) & 0x3F]);
+            valb -= 6;
+        }
+    }
+    if (valb > -6) out.push_back(b64_table[((val << 8) >> (valb + 6)) & 0x3F]);
+    while (out.size() % 4) out.push_back('=');
+    return out;
+}
+
+
+int main() {
+    printf("\033[?1049h");
+
+    string dir = "../test/acta est fabula, plaudite (feat. Irissu, mrcool909090 & Cheryl Stelli) - A-Saph,Irissu,mrcool909090.flac";
+
     int img_w, img_h, channels;
+    auto pixels = getCoverRawData(dir, img_w, img_h, channels);
 
-    unsigned char* img = stbi_load_from_memory(pic_data, d_size, &img_w, &img_h, &channels, 0);
+    size_t byte_count = static_cast<size_t>(img_w) * img_h * channels;
+    std::string encoded = base64_encode(pixels, byte_count);
 
-    cout<<img_w<<" "<<img_h<<" "<<channels<<endl;
-    std::vector pixels(img, img + img_w * img_h * channels);
-    guint8 *pixel_ptr = pixels.data();
+    int format;
+    if (channels == 3)
+        format = 24;
+    else format = 32;
 
-    float ratio = float(img_w) / img_h;
+    printf("\033[%lu;%luH", 2, 2);
+    send_kitty_image(encoded, img_w, img_h, format, 77, 77/2);
+    free(pixels);
 
-    // Config
-    gchar **envp = g_get_environ();
-    ChafaTermInfo *term_info = chafa_term_db_detect(chafa_term_db_get_default(), envp);
-    ChafaCanvasMode mode;
-    mode = chafa_term_info_get_best_canvas_mode(term_info);
-
-    ChafaCanvasConfig *config = chafa_canvas_config_new();
-    chafa_canvas_config_set_geometry(config, int(50 * ratio) * 2, 50);
-    chafa_canvas_config_set_canvas_mode(config, mode);
-    // chafa_canvas_config_set_cell_geometry(config, 1, 1);
-
-    const gchar *term_name = chafa_term_info_get_name(term_info);
-    if (!strcmp(term_name, "kitty"))
-        chafa_canvas_config_set_pixel_mode(config, CHAFA_PIXEL_MODE_KITTY);
-
-    ChafaSymbolMap *map = chafa_symbol_map_new();
-    chafa_symbol_map_add_by_tags(map, chafa_term_info_get_safe_symbol_tags(term_info));
-    chafa_canvas_config_set_symbol_map(config, map);
-
-    // Canvas
-    ChafaCanvas *canvas = chafa_canvas_new(config);
-
-    // Draw
-    chafa_canvas_draw_all_pixels(
-        canvas,
-        CHAFA_PIXEL_RGB8,
-        pixel_ptr,
-        img_w,
-        img_h,
-        img_w * channels
-    );
-
-    // Print output
-    auto *text = chafa_canvas_print(canvas, nullptr);
-    cout << text->str<<endl;
-    g_free(text);
-
-    // Cleanup
-    chafa_canvas_unref(canvas);
-    // chafa_symbol_map_unref(map);
-    chafa_canvas_config_unref(config);
-    g_strfreev(envp);
-
-    return 0;
+    std::this_thread::sleep_for(2s);
+    printf("\033[?1049l");
 }

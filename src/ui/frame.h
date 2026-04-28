@@ -1,6 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-void draw_border();
+void drawBorder();
+void drawLeftBox();
 
 #endif //FRAME_H

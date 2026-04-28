@@ -18,5 +18,8 @@
     /ui
         common.cpp
             What is that?
+    /pic
+        loadPic.cpp
+            Loading cover image from the music file and return data decoded by stb_image. Return empty array if error or no cover image.
     main.cpp
         Main part of the program. Handling enter and exit of the program and temporarily handling getWinSize
