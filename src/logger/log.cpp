@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <filesystem>
 
-#include "../event/events.h"
+#include "../event/globalVar.h"
 
 void log_init() {
     if (std::filesystem::exists("ump.log"))

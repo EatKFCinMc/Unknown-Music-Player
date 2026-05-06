@@ -49,3 +49,10 @@ void refreshBuffer() { fflush(stdout); }
 void hideCursor() { printf("\033[?25l"); }
 
 void showCursor() { printf("\033[?25h"); }
+
+void print_instruction() {
+    if (term_width > 70)
+        printAt(term_width/2 - 34, 1, "Controls: 'p' or space = Play/Pause, 'q' = Exit, Arrow = next / prev"); // len=68
+    else if (term_width > 46)
+        printAt(term_width/2 - 22, 1, "p/space: play/pause q: exit Arrow: next/prev"); // len=44
+}

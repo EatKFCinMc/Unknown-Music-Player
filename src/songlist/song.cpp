@@ -6,12 +6,13 @@
 #include <string>
 #include <string_view>
 #include <filesystem>
+#include <thread>
 
 #include "song.h"
 
 #include "../ui/common.h"
 
-#include "../event/events.h"
+#include "../event/globalVar.h"
 
 
 std::string suffixes[] = {".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a"};
@@ -89,6 +90,7 @@ void Song::play() {
             ma_sound_stop(&sound);
             break;
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     ma_sound_uninit(&sound);

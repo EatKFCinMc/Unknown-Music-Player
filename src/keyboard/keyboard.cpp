@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <fcntl.h>
 #include <termios.h>
+#include <thread>
 
 #include "miniaudio/miniaudio.h"
 
@@ -71,6 +72,7 @@ void keyboard_listener() {
                     break;
             }
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 

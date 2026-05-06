@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "../event/events.h"
+#include "../event/globalVar.h"
 
 #include "../logger/log.h"
 

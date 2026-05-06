@@ -127,12 +127,6 @@ void displayCover(const size_t col, const size_t row, const std::string& dir) {
 }
 
 
-void get_term_name() {
-    const char *term = std::getenv("TERM");
-    term_name = term == nullptr ? "" : term;
-}
-
-
 // chafa is shit so I abandon it
 
 // void displayCover(const size_t col, const size_t row, const std::string& dir) {

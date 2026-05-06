@@ -20,10 +20,21 @@ extern std::string term_name;
 // left box
 extern size_t lb_width;
 
-
-
-// flag
+// flags
 extern bool cover_drawing;
+
+// event flags
+extern bool TERMINATE;
+extern bool KBHIT_PAUSE;
+extern bool PAUSE;
+extern bool NEXT;
+extern bool PREV;
+extern bool VOLUP;
+extern bool VOLDOWN;
+extern bool LOGGER_DISABLED;
+extern bool WINDOW_CHANGE;
+extern bool SONG_END;
+extern bool SONG_UPDATE;
 
 // characters
 
@@ -38,5 +49,8 @@ inline const char* vertiRight = "├";
 inline const char* horiDown = "┬";
 inline const char* horiUp = "┴";
 inline const char* cross = "┼";
+
+void init_globalVar();
+void get_term_name();
 
 #endif //GLOBALVAR_H

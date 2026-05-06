@@ -1,14 +1,8 @@
 #include "events.h"
 
-bool TERMINATE = false;
-bool KBHIT_PAUSE = false;
-bool PAUSE = false;
-bool NEXT = false;
-bool PREV = false;
-bool VOLUP = false;
-bool VOLDOWN = false;
-bool LOGGER_DISABLED = false;
-bool SONG_END = false;
+#include <thread>
+
+#include "globalVar.h"
 
 
 void event_listener() {
@@ -20,5 +14,6 @@ void event_listener() {
         if (VOLUP) {}
         if (VOLDOWN) {}
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }

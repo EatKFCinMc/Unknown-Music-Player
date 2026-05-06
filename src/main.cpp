@@ -1,6 +1,4 @@
 #include <iostream>
-#include <unistd.h>
-#include <sys/ioctl.h>
 #include <filesystem>
 #include <fcntl.h>
 #include <thread>
@@ -22,33 +20,6 @@
 
 
 int tall, wide;
-
-void getWinSize() {
-    winsize w{};
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    term_height = w.ws_row;
-    term_width = w.ws_col;
-}
-
-
-void init_globalVar() {
-    title = "";
-    artist = "";
-    album = "";
-    total_time = 0;
-    current_time = 0;
-    getWinSize();
-    theme_color = 0;
-    get_term_name();
-    lb_width = term_width / 3;
-
-    std::string msg = std::string("Global variables initialization complete:\n") +
-    "term_height = " + std::to_string(term_height) + "\n" +
-    "term_width = " + std::to_string(term_width) + "\n" +
-    "term_name = " + term_name + "\n" +
-    "lb_width = " + std::to_string(lb_width);
-    logger(msg);
-}
 
 
 void init_window() {
@@ -72,10 +43,10 @@ void init(const std::string &dir = "") {
     std::thread keyboard_thread(keyboard_listener);
     keyboard_thread.detach();
 
-
     displayCover(2, 2, "/home/Empty/Project/unknownMusicPlayer/test/Alea jacta est! (xi Remix) - BlackY.mp3");
 
-    printAt(lb_width + 3, 2, "Controls: 'p' or space = Play/Pause, 'q' = Quit, Arrow = next / prev");
+    // printAt(lb_width + 3, 2, "Controls: 'p' or space = Play/Pause, 'q' = Quit, Arrow = next / prev");
+    print_instruction();
     if (std::filesystem::exists(dir)) {
         Playlist playlist(dir);
         playlist.playFromList();

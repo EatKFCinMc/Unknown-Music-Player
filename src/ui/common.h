@@ -11,5 +11,6 @@ void printAt(size_t col, size_t row, const std::string &s, size_t color = 0, boo
 void refreshBuffer();
 void hideCursor();
 void showCursor();
+void print_instruction();
 
 #endif //COMMON_H
