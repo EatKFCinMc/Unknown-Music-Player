@@ -96,3 +96,13 @@ Song* Playlist::getFront() {
         return playList.front();
     return nullptr;
 }
+
+Song* Playlist::at(size_t index) {
+    if (index >= playList.size())
+        return nullptr;
+    return playList[index];
+}
+
+size_t Playlist::size() {
+    return playList.size();
+}

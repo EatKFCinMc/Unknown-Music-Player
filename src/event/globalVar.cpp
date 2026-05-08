@@ -34,8 +34,15 @@ size_t title_row;
 size_t artist_row;
 size_t album_row;
 // left box
-size_t lb_width = 0;
-size_t lb_width_inner = 0;
+size_t lb_width;
+size_t lb_width_inner;
+// right box
+size_t rb_width;
+size_t rb_width_inner;
+size_t rb_pos;
+size_t rb_pos_inner;
+size_t rb_height;
+size_t rb_pos_height;
 
 // flags
 bool cover_drawing = false;
@@ -100,9 +107,18 @@ void init_globalVar() {
 void reload_layoutVar() {
     updateWinSize();
 
-    lb_width = term_width / 3;
+    // left box
+    lb_width = term_width / 3 + 1;
     lb_width_inner = lb_width - 4;
-    cover_width = lb_width > 1 ? lb_width - 1 : 1;
+    // right box
+    rb_width = term_width - lb_width + 1;
+    rb_width_inner = rb_width - 4;
+    rb_pos = lb_width;
+    rb_pos_inner = lb_width + 2;
+    rb_height = term_height - 2;
+    rb_pos_height = 4;
+    // others
+    cover_width = lb_width > 1 ? lb_width - 2 : 1;
     cover_height = std::min(cover_width / 2, term_height > 2 ? term_height - 2 : 1UL);
     cover_x = 2;
     cover_y = 2;
@@ -116,6 +132,11 @@ void reload_layoutVar() {
     "term_name = " + term_name + "\n" +
     "lb_width = " + std::to_string(lb_width) + "\n" +
     "lb_width_inner = " + std::to_string(lb_width_inner) + "\n" +
+    "rb_width = " + std::to_string(rb_width) + "\n" +
+    "rb_width_inner = " + std::to_string(rb_width_inner) + "\n" +
+    "rb_pos = " + std::to_string(rb_pos) + "\n" +
+    "rb_pos_inner = " + std::to_string(rb_pos_inner) + "\n" +
+    "rb_height = " + std::to_string(rb_height) + "\n" +
     "cover_width = " + std::to_string(cover_width) + "\n" +
     "cover_height = " + std::to_string(cover_height) + "\n" +
     "cover_x = " + std::to_string(cover_x) + "\n" +

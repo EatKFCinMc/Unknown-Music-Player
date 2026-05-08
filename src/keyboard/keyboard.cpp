@@ -56,7 +56,7 @@
 static termios oldt;
 static int oldf;
 
-void initKeyboard() {
+void init_keyboard() {
     termios newt;
 
     tcgetattr(STDIN_FILENO, &oldt);

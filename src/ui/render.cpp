@@ -1,4 +1,6 @@
+#include <filesystem>
 #include <iostream>
+#include <bits/locale_facets_nonio.h>
 
 #include "common.h"
 #include "../cover/showCover.h"
@@ -6,7 +8,7 @@
 #include "../logger/log.h"
 
 
-void drawBorder() {
+void draw_frame() {
     if (term_width < 2 || term_height < 2)
         return;
 
@@ -24,24 +26,76 @@ void drawBorder() {
 }
 
 
-void drawLeftBox() {
-    if (term_width < 3 || term_height < 2 || lb_width + 1 >= term_width)
+void draw_leftBox() {
+    if (term_width < 3 || term_height < 2 || lb_width >= term_width)
         return;
 
-    printf("\033[%d;%luH%s", 1, lb_width + 1, horiDown);
+    printf("\033[%d;%luH%s", 1, lb_width, horiDown);
     for (size_t i = 2; i < term_height; i++)
-        printf("\033[%lu;%luH%s", i, lb_width + 1, vertiLine);
-    printf("\033[%lu;%luH%s", term_height, lb_width + 1, horiUp);
+        printf("\033[%lu;%luH%s", i, lb_width, vertiLine);
+    printf("\033[%lu;%luH%s", term_height, lb_width, horiUp);
 }
 
-void drawList() {
+void draw_listHeader() {
+    printAt(rb_pos_inner + rb_width_inner / 4 * 3, 1, horiDown);
+    printAt(rb_pos_inner, 2, "Title");
+    printAt(rb_pos_inner + rb_width_inner / 4 * 3, 2, vertiLine);
+    printAt(rb_pos_inner + rb_width_inner / 4 * 3 + 2, 2, "Artist");
+    std::string temp;
+    for (size_t i = lb_width_inner; i < term_width - 4; i++) temp += horiLine;
+    printAt(rb_pos_inner - 1, 3, temp);
+    printAt(rb_pos_inner - 2, 3, vertiRight);
+    printAt(term_width, 3, vertiLeft);
+    printAt(rb_pos_inner + rb_width_inner / 4 * 3, 3, horiUp);
+}
 
+void clean_list() {
+    std::string space;
+    for (size_t i = 0; i < rb_width_inner; i++)
+        space += ' ';
+    for (size_t i = 0; i < rb_height - 2; i++) {
+        printAt(rb_pos_inner, i + rb_pos_height, space);
+    }
+}
+
+void draw_list() {
+    for (size_t i = 0; i < (list_ptr->size() > rb_height ? rb_height : list_ptr->size()); i++) {
+        std::string title_t = list_ptr->at(i)->getTitle();
+        std::string temp_title = title_t.substr(0, title_t.length() > rb_width_inner ? rb_width_inner : title_t.length());
+        printAt(rb_pos_inner, i + rb_pos_height, temp_title);
+    }
+
+    // std::string title_t = list_ptr->at(0)->getTitle();
+    // std::string temp_title = title_t.substr(0, title_t.length() > rb_width_inner ? rb_width_inner : title_t.length());
+    // printAt(rb_pos_inner, 2, temp_title);
+}
+
+void draw_metadata() {
+    std::string space;
+    for (size_t i = 0; i < lb_width_inner; i++)
+        space += ' ';
+
+    std::string temp_title = title.substr(0, title.length() > lb_width_inner ? lb_width_inner : title.length());
+    std::string temp_artist = artist.substr(0, artist.length() > lb_width_inner ? lb_width_inner : artist.length());
+    std::string temp_album = album.substr(0, album.length() > lb_width_inner ? lb_width_inner : album.length());
+    if (title_row < term_height) {
+        printAt(3, title_row, space);
+        printAt(3, title_row, temp_title);
+    }
+    if (artist_row < term_height) {
+        printAt(3, artist_row, space);
+        printAt(3, artist_row, temp_artist);
+    }
+    if (album_row < term_height) {
+        printAt(3, album_row, space);
+        printAt(3, album_row, temp_album);
+    }
 }
 
 void frame_render() {
-    drawBorder();
-    drawLeftBox();
-    drawList();
+    draw_frame();
+    draw_leftBox();
+    draw_listHeader();
 }
 
 void cover_render() {
@@ -49,23 +103,12 @@ void cover_render() {
 }
 
 void metadata_render() {
-    std::string space;
-    for (size_t i = 0; i < lb_width_inner; i++)
-        space += ' ';
-    printAt(3, title_row, space);
-    printAt(3, artist_row, space);
-    printAt(3, album_row, space);
+    draw_metadata();
+}
 
-    std::string temp_title = title.substr(0, title.length() > lb_width_inner ? lb_width_inner : title.length());
-    std::string temp_artist = artist.substr(0, artist.length() > lb_width_inner ? lb_width_inner : artist.length());
-    std::string temp_album = album.substr(0, album.length() > lb_width_inner ? lb_width_inner : album.length());
-    printAt(3, title_row, temp_title);
-    printAt(3, artist_row, temp_artist);
-    printAt(3, album_row, temp_album);
-    logger("Title length: " + std::to_string(title.length()) + "\n"
-        + "Title length after scrapping: " + std::to_string(title.length()) + "\n"
-        + "lb_width_inner - 1 : " + std::to_string(lb_width_inner)
-        );
+void list_render() {
+    clean_list();
+    draw_list();
 }
 
 void full_render() {
@@ -73,5 +116,6 @@ void full_render() {
     print_instruction();
     frame_render();
     cover_render();
+    list_render();
     metadata_render();
 }

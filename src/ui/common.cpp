@@ -19,7 +19,7 @@ void clearLine(int row, int col, int len) {
     for (int i = 0; i < len; i++) printf(" ");
 }
 
-void printAt(size_t col, size_t row, const std::string &s, size_t color, bool border) {
+void printAt(size_t col, size_t row, const std::string &s, bool border, size_t color) {
     printf("\033[%lum\033[%lu;%luH%s\033[0m", color, row, col, s.c_str());
 
 	if (border) {

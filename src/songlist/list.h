@@ -20,6 +20,8 @@ public:
     void playPrev ();
     void addSong (Song *s);
     Song* getFront();
+    Song* at(size_t index);
+    size_t size();
 };
 
 #endif //LIST_H

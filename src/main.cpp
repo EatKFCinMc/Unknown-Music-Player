@@ -37,8 +37,10 @@ void init(const std::string &dir = "") {
     std::ios::sync_with_stdio(true);
     log_init();
     init_globalVar();
+    playlist.loadFromPath(dir);
+    list_ptr = &playlist;
     init_window();
-    initKeyboard();
+    init_keyboard();
 
     std::thread keyboard_thread(keyboard_listener);
     keyboard_thread.detach();
@@ -46,11 +48,9 @@ void init(const std::string &dir = "") {
     event_thread.detach();
 
     if (std::filesystem::exists(dir)) {
-        playlist.loadFromPath(dir);
-        list_ptr = &playlist;
         playlist.playFromList();
     } else {
-        printAt(lb_width + 3, 3, "Error: No such file or directory");
+        printAt(term_width / 2 - 16, term_height / 2, "Error: No such file or directory", true);
         sleep(3);
     }
 

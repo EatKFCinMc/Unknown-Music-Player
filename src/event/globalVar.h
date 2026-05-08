@@ -34,6 +34,13 @@ extern size_t album_row;
 // left box
 extern size_t lb_width;
 extern size_t lb_width_inner;
+// right box
+extern size_t rb_width;
+extern size_t rb_width_inner;
+extern size_t rb_pos;
+extern size_t rb_pos_inner;
+extern size_t rb_height;
+extern size_t rb_pos_height;
 
 // flags
 extern bool cover_drawing;
