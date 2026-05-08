@@ -75,22 +75,12 @@ void get_term_name() {
 }
 
 void init_globalVar() {
-    title = "";
-    artist = "";
-    album = "";
     total_time = 0;
     current_time = 0;
     list_ptr = nullptr;
     theme_color = 0;
     get_term_name();
     reload_layoutVar();
-
-    std::string msg = std::string("Global variables initialization complete:\n") +
-    "term_height = " + std::to_string(term_height) + "\n" +
-    "term_width = " + std::to_string(term_width) + "\n" +
-    "term_name = " + term_name + "\n" +
-    "lb_width = " + std::to_string(lb_width);
-    logger(msg);
 
     struct sigaction sa;
     std::memset(&sa, 0, sizeof(sa));
@@ -111,7 +101,7 @@ void reload_layoutVar() {
     updateWinSize();
 
     lb_width = term_width / 3;
-    lb_width_inner = lb_width - 2;
+    lb_width_inner = lb_width - 4;
     cover_width = lb_width > 1 ? lb_width - 1 : 1;
     cover_height = std::min(cover_width / 2, term_height > 2 ? term_height - 2 : 1UL);
     cover_x = 2;
@@ -119,6 +109,21 @@ void reload_layoutVar() {
     title_row = cover_height + 2;
     artist_row = cover_height + 3;
     album_row = cover_height + 4;
+
+    std::string msg = std::string("Layout variables reloaded:\n") +
+    "term_height = " + std::to_string(term_height) + "\n" +
+    "term_width = " + std::to_string(term_width) + "\n" +
+    "term_name = " + term_name + "\n" +
+    "lb_width = " + std::to_string(lb_width) + "\n" +
+    "lb_width_inner = " + std::to_string(lb_width_inner) + "\n" +
+    "cover_width = " + std::to_string(cover_width) + "\n" +
+    "cover_height = " + std::to_string(cover_height) + "\n" +
+    "cover_x = " + std::to_string(cover_x) + "\n" +
+    "cover_y = " + std::to_string(cover_y) + "\n" +
+    "title_row = " + std::to_string(title_row) + "\n" +
+    "artist_row = " + std::to_string(artist_row) + "\n" +
+    "album_row = " + std::to_string(album_row);
+    logger(msg);
 }
 
 void reload_metadata() {
@@ -126,4 +131,11 @@ void reload_metadata() {
     artist = list_ptr->getFront()->getArtist();
     album = list_ptr->getFront()->getAlbum();
     songPath = list_ptr->getFront()->getSongPath();
+
+    std::string msg = std::string("Metadata reloaded:\n") +
+    "title = " + title + "\n" +
+    "artist = " + artist + "\n" +
+    "album = " + album + "\n" +
+    "songPath = " + songPath;
+    logger(msg);
 }

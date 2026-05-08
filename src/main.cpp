@@ -27,8 +27,7 @@ void init_window() {
     clearScr();
     hideCursor();
 
-    drawBorder();
-    drawLeftBox();
+    full_render();
 
     refreshBuffer();
 }
