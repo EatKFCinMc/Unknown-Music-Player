@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "common.h"
+#include "../cover/showCover.h"
 #include "../event/globalVar.h"
 
 
@@ -29,4 +31,38 @@ void drawLeftBox() {
     for (size_t i = 2; i < term_height; i++)
         printf("\033[%lu;%luH%s", i, lb_width + 1, vertiLine);
     printf("\033[%lu;%luH%s", term_height, lb_width + 1, horiUp);
+}
+
+void drawList() {
+
+}
+
+void frame_render() {
+    drawBorder();
+    drawLeftBox();
+    drawList();
+}
+
+void cover_render() {
+    displayCover(songPath);
+}
+
+void metadata_render() {
+    std::string space;
+    for (size_t i = 0; i < lb_width_inner - 1; i++)
+        space += ' ';
+    printAt(3, title_row, space);
+    printAt(3, artist_row, space);
+    printAt(3, album_row, space);
+
+    std::string temp_title = title.substr(0, title.size() >= lb_width_inner - 1 ? lb_width_inner - 1 : title.size());
+    std::string temp_artist = artist.substr(0, artist.size() >= lb_width_inner - 1 ? lb_width_inner - 1 : artist.size());
+    std::string temp_album = album.substr(0, album.size() >= lb_width_inner - 1 ? lb_width_inner - 1 : album.size());
+    printAt(3, title_row, title);
+    printAt(3, artist_row, artist);
+    printAt(3, album_row, album);
+}
+
+void full_render() {
+
 }

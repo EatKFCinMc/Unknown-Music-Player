@@ -34,6 +34,7 @@ void Playlist::loadFromPath(std::string dirPath) {
 void Playlist::playFromList () {
     if (playList.empty()) return;
 
+    SONG_UPDATE = true;
     playList.front()->play();
     if (TERMINATE) return;
 
@@ -63,7 +64,8 @@ void Playlist::playNext () {
         auto temp = playList.front();
         playList.pop_front();
         playList.push_back(temp);
-        logger(("Playing next. Current song list length: " + std::to_string(playList.size())).c_str());
+        SONG_UPDATE = true;
+        logger("Playing next. Current song list length: " + std::to_string(playList.size()));
 
         playList.front()->play();
     }
@@ -75,7 +77,8 @@ void Playlist::playPrev () {
         auto temp = playList.back();
         playList.pop_back();
         playList.push_front(temp);
-        logger(("Playing prev. Current song list length: " + std::to_string(playList.size())).c_str());
+        SONG_UPDATE = true;
+        logger("Playing prev. Current song list length: " + std::to_string(playList.size()));
 
         playList.front()->play();
     }
@@ -86,4 +89,10 @@ void Playlist::addSong (Song *s) {
     if (s->is_available()) {
         playList.push_back(s);
     }
+}
+
+Song* Playlist::getFront() {
+    if (!playList.empty())
+        return playList.front();
+    return nullptr;
 }

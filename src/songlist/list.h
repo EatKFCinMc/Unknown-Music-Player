@@ -19,6 +19,7 @@ public:
     void playNext ();
     void playPrev ();
     void addSong (Song *s);
+    Song* getFront();
 };
 
 #endif //LIST_H

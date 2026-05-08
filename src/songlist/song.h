@@ -15,7 +15,11 @@ public:
     bool verifyPath();
     bool getMetaData();
     void play();
-    bool is_available();
+    [[nodiscard]] bool is_available() const;
+    [[nodiscard]] std::string getTitle() const;
+    [[nodiscard]] std::string getArtist() const;
+    [[nodiscard]] std::string getAlbum() const;
+    [[nodiscard]] std::string getSongPath() const;
 };
 
 #endif //SONG_H

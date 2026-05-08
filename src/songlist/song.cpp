@@ -64,22 +64,29 @@ void Song::play() {
 
     ma_sound sound;
     result = ma_sound_init_from_file(&engine, filePath.c_str(), 0, NULL, NULL, &sound);
-    if (result != MA_SUCCESS)
+    if (result != MA_SUCCESS) {
+        ma_engine_uninit(&engine);
         return;
+    }
 
     ma_sound_start(&sound);
 
     bool flagPlaying = true;
-    ma_uint64 cursor = ma_sound_get_length_in_pcm_frames(&sound, &cursor);
-    ma_uint64 total = ma_sound_get_length_in_pcm_frames(&sound, &total);
+    ma_uint64 cursor;
+    ma_uint64 total;
+    ma_sound_get_length_in_pcm_frames(&sound, &cursor);
+    ma_sound_get_length_in_pcm_frames(&sound, &total);
+
     while (cursor <= total) {
         if (PAUSE) {
             if (flagPlaying) {
                 ma_sound_stop(&sound);
                 flagPlaying = false;
+                PAUSE = !PAUSE;
             } else {
                 ma_sound_start(&sound);
                 flagPlaying = true;
+                PAUSE = !PAUSE;
             }
         }
         if (NEXT || PREV) {
@@ -90,14 +97,29 @@ void Song::play() {
             ma_sound_stop(&sound);
             break;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
 
     ma_sound_uninit(&sound);
     ma_engine_uninit(&engine);
 }
 
-bool Song::is_available() {
+bool Song::is_available() const {
     return available;
+}
+
+std::string Song::getTitle() const {
+    return title;
+}
+
+std::string Song::getArtist() const {
+    return artist;
+}
+
+std::string Song::getAlbum() const {
+    return album;
+}
+std::string Song::getSongPath() const {
+    return filePath;
 }
 

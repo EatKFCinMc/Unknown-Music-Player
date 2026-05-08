@@ -12,7 +12,7 @@ pkg_check_modules(PC_TAGLIB REQUIRED taglib)
 add_executable(ump
     src/main.cpp
     src/ui/common.cpp
-    src/ui/frame.cpp
+    src/ui/render.cpp
     src/keyboard/keyboard.cpp
     src/songlist/song.cpp
     src/songlist/list.cpp

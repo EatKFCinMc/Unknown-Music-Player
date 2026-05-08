@@ -4,7 +4,7 @@
 #include <thread>
 
 #include "ui/common.h"
-#include "ui/frame.h"
+#include "ui/render.h"
 
 #include "songlist/song.h"
 #include "songlist/list.h"
@@ -20,7 +20,7 @@
 
 
 int tall, wide;
-
+Playlist playlist;
 
 void init_window() {
     enterAltScr();
@@ -42,19 +42,23 @@ void init(const std::string &dir = "") {
 
     std::thread keyboard_thread(keyboard_listener);
     keyboard_thread.detach();
+    std::thread event_thread(event_listener);
+    event_thread.detach();
 
-    displayCover(2, 2, "/home/Empty/Project/unknownMusicPlayer/test/Alea jacta est! (xi Remix) - BlackY.mp3");
+    displayCover("/home/Empty/Project/unknownMusicPlayer/test/Alea jacta est! (xi Remix) - BlackY.mp3");
 
-    // printAt(lb_width + 3, 2, "Controls: 'p' or space = Play/Pause, 'q' = Quit, Arrow = next / prev");
     print_instruction();
     if (std::filesystem::exists(dir)) {
-        Playlist playlist(dir);
+        playlist.loadFromPath(dir);
+        list_ptr = &playlist;
         playlist.playFromList();
     } else {
         printAt(lb_width + 3, 3, "Error: No such file or directory");
         sleep(3);
     }
 
+    showCursor();
+    exitAltScr();
 }
 
 
@@ -67,8 +71,5 @@ int main(int argc, char *argv[]) {
     }
 
     init(fileStr);
-
-    showCursor();
-    exitAltScr();
     return 0;
 }

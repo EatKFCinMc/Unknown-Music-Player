@@ -17,7 +17,6 @@ void send_kitty_image(const std::string& encoded, size_t width,
     size_t pos = 0;
     bool first = true;
 
-    std::cout<<"\033_Gd=a\033\\";
     printf("\033[%d;%dH", 2, 2);
     while (pos < encoded.size()) {
         size_t n = std::min(chunk_size, encoded.size() - pos);
@@ -73,7 +72,8 @@ std::string base64_encode(const unsigned char *data, size_t len)
 }
 
 
-void displayCover(const size_t col, const size_t row, const std::string& dir) {
+void displayCover(const std::string& dir) {
+    std::cout<<"\033_Gd=a\033\\";
     logger("Loading cover in dir: " + dir);
     if (term_name.find("kitty") == std::string::npos) {
         logger("Skipping cover display because TERM is not kitty-compatible: " + term_name);
@@ -109,9 +109,6 @@ void displayCover(const size_t col, const size_t row, const std::string& dir) {
         return;
     }
 
-    const size_t display_width = lb_width > 1 ? lb_width - 1 : 1;
-    const size_t display_height = std::min(display_width / 2, term_height > 2 ? term_height - 2 : 1UL);
-
     logger("img_w=" + std::to_string(img_w) +
        " img_h=" + std::to_string(img_h) +
        " channels=" + std::to_string(channels) +
@@ -120,14 +117,14 @@ void displayCover(const size_t col, const size_t row, const std::string& dir) {
        " encoded_size=" + std::to_string(encoded.size()));
 
     cover_drawing = true;
-    printf("\033[%zu;%zuH", col, row);
-    send_kitty_image(encoded, img_w, img_h, format, display_width, display_height);
+    printf("\033[%zu;%zuH", cover_x, cover_y);
+    send_kitty_image(encoded, img_w, img_h, format, cover_width, cover_height);
     cover_drawing = false;
     free(pixels);
 }
 
 
-// chafa is shit so I abandon it
+// chafa is so shit so I abandon it
 
 // void displayCover(const size_t col, const size_t row, const std::string& dir) {
 //     int img_w, img_h, channels;

@@ -8,14 +8,6 @@
 using namespace std;
 
 
-// const char* downRight = "┌";
-// const char* upRight = "└";
-// const char* downLeft = "┐";
-// const char* upLeft = "┘";
-// const char* horiLine = "─";
-// const char* vertiLine = "│";
-
-
 void enterAltScr() { printf("\033[?1049h"); }
 
 void exitAltScr() { printf("\033[?1049l"); }
