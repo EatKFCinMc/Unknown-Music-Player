@@ -55,14 +55,18 @@ void metadata_render() {
     printAt(3, artist_row, space);
     printAt(3, album_row, space);
 
-    std::string temp_title = title.substr(0, title.size() >= lb_width_inner - 1 ? lb_width_inner - 1 : title.size());
-    std::string temp_artist = artist.substr(0, artist.size() >= lb_width_inner - 1 ? lb_width_inner - 1 : artist.size());
-    std::string temp_album = album.substr(0, album.size() >= lb_width_inner - 1 ? lb_width_inner - 1 : album.size());
+    std::string temp_title = title.substr(0, title.length() >= lb_width_inner - 1 ? lb_width_inner - 1 : title.length());
+    std::string temp_artist = artist.substr(0, artist.length() >= lb_width_inner - 1 ? lb_width_inner - 1 : artist.length());
+    std::string temp_album = album.substr(0, album.length() >= lb_width_inner - 1 ? lb_width_inner - 1 : album.length());
     printAt(3, title_row, title);
     printAt(3, artist_row, artist);
     printAt(3, album_row, album);
 }
 
 void full_render() {
-
+    clearScr();
+    print_instruction();
+    frame_render();
+    cover_render();
+    metadata_render();
 }

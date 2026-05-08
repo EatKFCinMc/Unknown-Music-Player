@@ -39,15 +39,13 @@ void init(const std::string &dir = "") {
     log_init();
     init_globalVar();
     init_window();
+    initKeyboard();
 
     std::thread keyboard_thread(keyboard_listener);
     keyboard_thread.detach();
     std::thread event_thread(event_listener);
     event_thread.detach();
 
-    displayCover("/home/Empty/Project/unknownMusicPlayer/test/Alea jacta est! (xi Remix) - BlackY.mp3");
-
-    print_instruction();
     if (std::filesystem::exists(dir)) {
         playlist.loadFromPath(dir);
         list_ptr = &playlist;

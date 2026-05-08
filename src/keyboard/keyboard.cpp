@@ -12,42 +12,85 @@
 #include "../logger/log.h"
 #include "../event/globalVar.h"
 
-int kbhit() {
-    termios oldt, newt;
-    int ch;
-    int oldf;
+// int kbhit() {
+//     termios oldt, newt;
+//     int ch;
+//     int oldf;
+//
+//     tcgetattr(STDIN_FILENO, &oldt);
+//     newt = oldt;
+//     newt.c_lflag &= ~(ICANON | ECHO);
+//     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+//
+//     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+//     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+//
+//     ch = getchar();
+//     // int result = read(STDIN_FILENO, &ch, 1);
+//
+//     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+//     fcntl(STDIN_FILENO, F_SETFL, oldf);
+//
+//     if (ch != EOF) {
+//     // if (result == 1) {
+//         ungetc(ch, stdin);
+//         return 1;
+//     }
+//     return 0;
+// }
+//
+//
+// int getch() {
+//     int ch;
+//     termios oldt, newt;
+//     tcgetattr(STDIN_FILENO, &oldt);
+//     newt = oldt;
+//     newt.c_lflag &= ~(ICANON | ECHO);
+//     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+//     ch = getchar();
+//     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+//     return ch;
+// }
+
+
+static termios oldt;
+static int oldf;
+
+void initKeyboard() {
+    termios newt;
 
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
     newt.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+
+    atexit([]() {
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        fcntl(STDIN_FILENO, F_SETFL, oldf);
+    });
+}
+
+int kbhit() {
+    int ch;
+
     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
 
     ch = getchar();
 
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     fcntl(STDIN_FILENO, F_SETFL, oldf);
 
     if (ch != EOF) {
         ungetc(ch, stdin);
         return 1;
     }
+
+    clearerr(stdin);
     return 0;
 }
 
-
 int getch() {
-    int ch;
-    termios oldt, newt;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    return ch;
+    return getchar();
 }
 
 void keyboard_listener() {
