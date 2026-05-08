@@ -3,6 +3,7 @@
 #include "common.h"
 #include "../cover/showCover.h"
 #include "../event/globalVar.h"
+#include "../logger/log.h"
 
 
 void drawBorder() {
@@ -49,18 +50,22 @@ void cover_render() {
 
 void metadata_render() {
     std::string space;
-    for (size_t i = 0; i < lb_width_inner - 1; i++)
+    for (size_t i = 0; i < lb_width_inner; i++)
         space += ' ';
     printAt(3, title_row, space);
     printAt(3, artist_row, space);
     printAt(3, album_row, space);
 
-    std::string temp_title = title.substr(0, title.length() >= lb_width_inner - 1 ? lb_width_inner - 1 : title.length());
-    std::string temp_artist = artist.substr(0, artist.length() >= lb_width_inner - 1 ? lb_width_inner - 1 : artist.length());
-    std::string temp_album = album.substr(0, album.length() >= lb_width_inner - 1 ? lb_width_inner - 1 : album.length());
-    printAt(3, title_row, title);
-    printAt(3, artist_row, artist);
-    printAt(3, album_row, album);
+    std::string temp_title = title.substr(0, title.length() > lb_width_inner ? lb_width_inner : title.length());
+    std::string temp_artist = artist.substr(0, artist.length() > lb_width_inner ? lb_width_inner : artist.length());
+    std::string temp_album = album.substr(0, album.length() > lb_width_inner ? lb_width_inner : album.length());
+    printAt(3, title_row, temp_title);
+    printAt(3, artist_row, temp_artist);
+    printAt(3, album_row, temp_album);
+    logger("Title length: " + std::to_string(title.length()) + "\n"
+        + "Title length after scrapping: " + std::to_string(title.length()) + "\n"
+        + "lb_width_inner - 1 : " + std::to_string(lb_width_inner)
+        );
 }
 
 void full_render() {
