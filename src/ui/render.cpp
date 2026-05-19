@@ -53,16 +53,20 @@ void clean_list() {
     std::string space;
     for (size_t i = 0; i < rb_width_inner; i++)
         space += ' ';
-    for (size_t i = 0; i < rb_height - 2; i++) {
+    for (size_t i = 0; i < list_height; i++) {
         printAt(rb_pos_inner, i + rb_pos_height, space);
     }
 }
 
 void draw_list() {
-    for (size_t i = 0; i < (list_ptr->size() > rb_height ? rb_height : list_ptr->size()); i++) {
+    for (size_t i = 0; i < (list_ptr->size() > list_height ? list_height : list_ptr->size()); i++) {
         std::string title_t = list_ptr->at(i)->getTitle();
-        std::string temp_title = title_t.substr(0, title_t.length() > rb_width_inner ? rb_width_inner : title_t.length());
+        std::string temp_title = title_t.substr(0, title_t.length() > list_title_len ? list_title_len : title_t.length());
         printAt(rb_pos_inner, i + rb_pos_height, temp_title);
+
+        std::string artist_t = list_ptr->at(i)->getArtist();
+        std::string temp_artist = artist_t.substr(0, artist_t.length() > list_artist_len ? list_artist_len : artist_t.length());
+        printAt(rb_pos_inner + list_title_len + 3, i + rb_pos_height, temp_artist);
     }
 
     // std::string title_t = list_ptr->at(0)->getTitle();
@@ -92,18 +96,69 @@ void draw_metadata() {
     }
 }
 
+std::string milisec_to_min_string(size_t milisec) {
+    size_t sec = milisec / 1000;
+    size_t min = sec / 60;
+    sec = sec % 60;
+    std::string res = std::to_string(min) + ":" + std::to_string(sec);
+    return res;
+}
+
+
+std::string sec_to_min_string(double sec) {
+    size_t min = sec / 60;
+    size_t sec_t = static_cast<int>(sec) % 60;
+    std::string sec_str = std::to_string(sec_t);
+    if (sec_str.length() == 1) sec_str = "0" + sec_str;
+    std::string res = std::to_string(min) + ":" + sec_str;
+    return res;
+}
+
+void draw_bar_frame() {
+    printAt(1, lb_bar_pos, vertiRight);
+    std::string line_t;
+    for (size_t i = 0; i < lb_width_inner + 2; i++)
+        line_t += horiLine;
+    printAt(2, lb_bar_pos, line_t);
+    printAt(lb_width, lb_bar_pos, vertiLeft);
+}
+
+void draw_bar() {
+    std::string space;
+    for (size_t i = 0; i < lb_bar_len; i++)
+        space += ' ';
+    printAt(4, lb_bar_pos + 2, space);
+    printAt(4, lb_bar_pos + 3, space);
+
+    auto progress_chunk = static_cast<size_t>(current_time / total_time * static_cast<int>(lb_bar_len));
+    std::string line_t;
+    for (size_t i = 0; i < progress_chunk; i++)
+        line_t += barThick;
+    for (size_t i = 0; i < lb_bar_len - progress_chunk; i++)
+        line_t += barEmpty;
+    printAt(4, lb_bar_pos + 2, line_t);
+
+    std::string curr_time_t = sec_to_min_string(current_time);
+    std::string total_time_t = sec_to_min_string(total_time);
+    printAt(4, lb_bar_pos + 3, curr_time_t);
+    printAt(lb_width - 2 - total_time_t.length(), lb_bar_pos + 3, total_time_t);
+}
+
+
 void frame_render() {
     draw_frame();
     draw_leftBox();
     draw_listHeader();
+    draw_bar_frame();
 }
 
 void cover_render() {
     displayCover(songPath);
 }
 
-void metadata_render() {
+void songinfo_render() {
     draw_metadata();
+    draw_bar();
 }
 
 void list_render() {
@@ -117,5 +172,5 @@ void full_render() {
     frame_render();
     cover_render();
     list_render();
-    metadata_render();
+    songinfo_render();
 }

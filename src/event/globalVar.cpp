@@ -12,8 +12,8 @@ std::string title;
 std::string artist;
 std::string album;
 std::string songPath;
-float total_time = 0;
-float current_time = 0;
+double total_time = 0;
+double current_time = 0;
 Playlist* list_ptr = nullptr;
 
 // terminal data
@@ -36,6 +36,8 @@ size_t album_row;
 // left box
 size_t lb_width;
 size_t lb_width_inner;
+size_t lb_bar_pos;
+size_t lb_bar_len;
 // right box
 size_t rb_width;
 size_t rb_width_inner;
@@ -43,6 +45,10 @@ size_t rb_pos;
 size_t rb_pos_inner;
 size_t rb_height;
 size_t rb_pos_height;
+// song list
+size_t list_height;
+size_t list_title_len;
+size_t list_artist_len;
 
 // flags
 bool cover_drawing = false;
@@ -59,6 +65,7 @@ bool LOGGER_DISABLED = false;
 bool WINDOW_CHANGE = false;
 bool SONG_END = false;
 bool SONG_UPDATE = false;
+bool BAR_UPDATE = false;
 
 
 void sigwinch_handler(int sig) {
@@ -110,6 +117,8 @@ void reload_layoutVar() {
     // left box
     lb_width = term_width / 3 + 1;
     lb_width_inner = lb_width - 4;
+    lb_bar_pos = term_height - 6;
+    lb_bar_len = lb_width_inner - 2;
     // right box
     rb_width = term_width - lb_width + 1;
     rb_width_inner = rb_width - 4;
@@ -117,14 +126,18 @@ void reload_layoutVar() {
     rb_pos_inner = lb_width + 2;
     rb_height = term_height - 2;
     rb_pos_height = 4;
+    // song list
+    list_height = rb_height - 2;
+    list_title_len = rb_width_inner / 4 * 3 - 1;
+    list_artist_len = rb_width_inner - list_title_len - 5;
     // others
     cover_width = lb_width > 1 ? lb_width - 2 : 1;
     cover_height = std::min(cover_width / 2, term_height > 2 ? term_height - 2 : 1UL);
     cover_x = 2;
     cover_y = 2;
-    title_row = cover_height + 2;
-    artist_row = cover_height + 3;
-    album_row = cover_height + 4;
+    title_row = cover_height + 3;
+    artist_row = cover_height + 4;
+    album_row = cover_height + 5;
 
     std::string msg = std::string("Layout variables reloaded:\n") +
     "term_height = " + std::to_string(term_height) + "\n" +

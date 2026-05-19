@@ -40,9 +40,15 @@ void event_listener() {
         if (SONG_UPDATE) {
             logger("SONG_UPDATE received");
             reload_metadata();
-            metadata_render();
+            songinfo_render();
+            list_render();
             cover_render();
             SONG_UPDATE = false;
+        }
+        if (BAR_UPDATE) {
+            logger("BAR_UPDATE received");
+            draw_bar();
+            BAR_UPDATE = false;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));

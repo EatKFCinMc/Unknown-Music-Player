@@ -2,7 +2,7 @@
 #define GLOBALVAR_H
 
 #include <string>
-#include <mutex>
+#include <atomic>
 #include "../songlist/list.h"
 
 // general data
@@ -10,8 +10,8 @@ extern std::string title;
 extern std::string artist;
 extern std::string album;
 extern std::string songPath;
-extern float total_time;
-extern float current_time;
+extern double total_time;
+extern double current_time;
 extern Playlist* list_ptr;
 
 // terminal data
@@ -34,6 +34,8 @@ extern size_t album_row;
 // left box
 extern size_t lb_width;
 extern size_t lb_width_inner;
+extern size_t lb_bar_pos;
+extern size_t lb_bar_len;
 // right box
 extern size_t rb_width;
 extern size_t rb_width_inner;
@@ -41,6 +43,10 @@ extern size_t rb_pos;
 extern size_t rb_pos_inner;
 extern size_t rb_height;
 extern size_t rb_pos_height;
+// song list
+extern size_t list_height;
+extern size_t list_title_len;
+extern size_t list_artist_len;
 
 // flags
 extern bool cover_drawing;
@@ -57,6 +63,7 @@ extern bool LOGGER_DISABLED;
 extern bool WINDOW_CHANGE;
 extern bool SONG_END;
 extern bool SONG_UPDATE;
+extern bool BAR_UPDATE;
 
 // characters
 
@@ -71,6 +78,9 @@ inline const char* vertiRight = "├";
 inline const char* horiDown = "┬";
 inline const char* horiUp = "┴";
 inline const char* cross = "┼";
+inline const char* barThick = "━";
+inline const char* barEmpty = "═";
+
 
 void init_globalVar();
 void get_term_name();

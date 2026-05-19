@@ -39,14 +39,13 @@ void Playlist::playFromList () {
     if (TERMINATE) return;
 
     while (true) {
-        if (SONG_END) {
-            SONG_END = false;
-            playNext();
-        } else if (NEXT) {
+        if (SONG_END || NEXT) {
             NEXT = false;
+            SONG_END = false;
             playNext();
         } else if (PREV) {
             PREV = false;
+            SONG_END = false;
             playPrev();
         }
 

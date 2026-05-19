@@ -14,6 +14,7 @@
 
 #include "../event/globalVar.h"
 
+#include "../logger/log.h"
 
 std::string suffixes[] = {".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a"};
 
@@ -43,9 +44,9 @@ bool Song::verifyPath() {
 bool Song::getMetaData() {
     TagLib::FileRef metaData(filePath.c_str());
     if (!metaData.isNull() && metaData.tag()) {
-        title = metaData.tag()->title().to8Bit();
-        artist = metaData.tag()->artist().to8Bit();
-        album = metaData.tag()->album().to8Bit();
+        title = metaData.tag()->title().to8Bit(true);
+        artist = metaData.tag()->artist().to8Bit(true);
+        album = metaData.tag()->album().to8Bit(true);
         return true;
     }
     return false;
@@ -69,15 +70,25 @@ void Song::play() {
         return;
     }
 
+    float time_t;
+    ma_sound_get_length_in_seconds(&sound, &time_t);
+    total_time = time_t;
+    time_t = 0;
+    current_time = 0;
+    BAR_UPDATE = true;
+
+    size_t framerate = ma_engine_get_sample_rate(&engine);
     ma_sound_start(&sound);
 
     bool flagPlaying = true;
     ma_uint64 cursor;
-    ma_uint64 total;
-    ma_sound_get_length_in_pcm_frames(&sound, &cursor);
-    ma_sound_get_length_in_pcm_frames(&sound, &total);
+    ma_uint64 total_frame;
+    ma_sound_get_cursor_in_pcm_frames(&sound, &cursor);
+    ma_sound_get_length_in_pcm_frames(&sound, &total_frame);
+    logger("Media engine initialization complete.\nCursor: "
+        + std::to_string(cursor) + "\nTotal: " + std::to_string(total_frame));
 
-    while (cursor <= total) {
+    while (cursor < total_frame) {
         if (PAUSE) {
             if (flagPlaying) {
                 ma_sound_stop(&sound);
@@ -97,11 +108,20 @@ void Song::play() {
             ma_sound_stop(&sound);
             break;
         }
+        ma_sound_get_cursor_in_pcm_frames(&sound, &cursor);
+        current_time = static_cast<double>(cursor) / static_cast<double>(framerate);
+        if (current_time - time_t >= 1) {
+            BAR_UPDATE = true;
+            time_t = static_cast<float>(current_time);
+        }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
 
     ma_sound_uninit(&sound);
     ma_engine_uninit(&engine);
+    if (cursor >= total_frame)
+        SONG_END = true;
 }
 
 bool Song::is_available() const {
@@ -122,4 +142,3 @@ std::string Song::getAlbum() const {
 std::string Song::getSongPath() const {
     return filePath;
 }
-

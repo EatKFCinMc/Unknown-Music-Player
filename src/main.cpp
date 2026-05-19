@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fcntl.h>
 #include <thread>
+#include <unistd.h>
 
 #include "ui/common.h"
 #include "ui/render.h"
@@ -43,9 +44,7 @@ void init(const std::string &dir = "") {
     init_keyboard();
 
     std::thread keyboard_thread(keyboard_listener);
-    keyboard_thread.detach();
     std::thread event_thread(event_listener);
-    event_thread.detach();
 
     if (std::filesystem::exists(dir)) {
         playlist.playFromList();
@@ -53,6 +52,9 @@ void init(const std::string &dir = "") {
         printAt(term_width / 2 - 16, term_height / 2, "Error: No such file or directory", true);
         sleep(3);
     }
+
+    keyboard_thread.join();
+    event_thread.join();
 
     showCursor();
     exitAltScr();

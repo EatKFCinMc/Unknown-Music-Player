@@ -6,9 +6,12 @@ void draw_leftBox();
 void draw_listHeader();
 void draw_list();
 void draw_metadata();
+void draw_bar_frame();
+void draw_bar();
 void frame_render();
 void cover_render();
-void metadata_render();
+void songinfo_render();
+void list_render();
 void full_render();
 
 #endif //FRAME_H
