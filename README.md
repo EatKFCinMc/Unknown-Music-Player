@@ -7,9 +7,9 @@ Another TUI style music player
 
 Feature
 --------
+- Support kitty graphic protocol
 - Play a single music file
 - Play from a directory
-- Have a colorful TUI
 
 Usage
 --------
