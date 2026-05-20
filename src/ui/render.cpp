@@ -3,9 +3,9 @@
 #include <bits/locale_facets_nonio.h>
 
 #include "common.h"
-#include "../cover/showCover.h"
-#include "../event/globalVar.h"
-#include "../logger/log.h"
+#include "showCover.h"
+#include "globalVar.h"
+#include "log.h"
 
 
 void draw_frame() {
@@ -130,7 +130,7 @@ void draw_bar() {
     printAt(4, lb_bar_pos + 2, space);
     printAt(4, lb_bar_pos + 3, space);
 
-    auto progress_chunk = static_cast<size_t>(current_time / total_time * static_cast<int>(lb_bar_len));
+    size_t progress_chunk = static_cast<size_t>(current_time / total_time * static_cast<int>(lb_bar_len)) ? 0 : !total_time;
     std::string line_t;
     for (size_t i = 0; i < progress_chunk; i++)
         line_t += barThick;
@@ -146,6 +146,7 @@ void draw_bar() {
 
 
 void frame_render() {
+    logger("frame_render initiated");
     draw_frame();
     draw_leftBox();
     draw_listHeader();
@@ -153,20 +154,24 @@ void frame_render() {
 }
 
 void cover_render() {
+    logger("cover_render initiated");
     displayCover(songPath);
 }
 
 void songinfo_render() {
+    logger("songinfo_render initiated");
     draw_metadata();
     draw_bar();
 }
 
 void list_render() {
+    logger("list_render initiated");
     clean_list();
     draw_list();
 }
 
 void full_render() {
+    logger("full_render initiated");
     clearScr();
     print_instruction();
     frame_render();

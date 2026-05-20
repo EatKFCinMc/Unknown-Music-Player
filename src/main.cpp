@@ -4,21 +4,13 @@
 #include <thread>
 #include <unistd.h>
 
-#include "ui/common.h"
-#include "ui/render.h"
-
-#include "songlist/song.h"
-#include "songlist/list.h"
-
-#include "keyboard/keyboard.h"
-
-#include "event/events.h"
-#include "event/globalVar.h"
-
-#include "logger/log.h"
-
-#include "cover/showCover.h"
-
+#include "common.h"
+#include "render.h"
+#include "list.h"
+#include "keyboard.h"
+#include "events.h"
+#include "globalVar.h"
+#include "log.h"
 
 int tall, wide;
 Playlist playlist;
@@ -40,6 +32,7 @@ void init(const std::string &dir = "") {
     init_globalVar();
     playlist.loadFromPath(dir);
     list_ptr = &playlist;
+    reload_metadata();
     init_window();
     init_keyboard();
 

@@ -1,9 +1,9 @@
 #include "common.h"
 
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 
-#include "../event/globalVar.h"
+#include "globalVar.h"
 
 using namespace std;
 

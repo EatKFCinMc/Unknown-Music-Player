@@ -1,11 +1,11 @@
 #include "log.h"
 
-#include <stdio.h>
+#include <cstdio>
 #include <filesystem>
 #include <thread>
 #include <ctime>
 
-#include "../event/globalVar.h"
+#include "globalVar.h"
 
 void log_init() {
     if (std::filesystem::exists("ump.log"))
@@ -13,9 +13,9 @@ void log_init() {
 }
 
 // Get the current date/time. The format is YYYY-MM-DD.HH:mm:ss
-const std::string currentDateTime() {
+std::string currentDateTime() {
     time_t now = time(0);
-    struct tm tstruct;
+    tm tstruct;
     char buf[80];
     tstruct = *localtime(&now);
     strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);

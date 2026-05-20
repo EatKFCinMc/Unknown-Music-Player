@@ -2,9 +2,9 @@
 
 #include <filesystem>
 
-#include "../event/globalVar.h"
+#include "globalVar.h"
 
-#include "../logger/log.h"
+#include "log.h"
 
 Playlist::Playlist(std::string dirPath) {
     if (!dirPath.empty()) {

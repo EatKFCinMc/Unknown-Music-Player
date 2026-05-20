@@ -5,7 +5,8 @@
 #include <csignal>
 #include <cstring>
 
-#include "../logger/log.h"
+#include "log.h"
+#include "events.h"
 
 // song info
 std::string title;
@@ -54,6 +55,7 @@ size_t list_artist_len;
 bool cover_drawing = false;
 
 // event flags
+std::queue<int> event_bus;
 bool TERMINATE = false;
 bool KBHIT_PAUSE = false;
 bool PAUSE = false;
@@ -69,6 +71,7 @@ bool BAR_UPDATE = false;
 
 
 void sigwinch_handler(int sig) {
+    event_bus.push(WINDOW_CHANGE);
     WINDOW_CHANGE = true;
 }
 

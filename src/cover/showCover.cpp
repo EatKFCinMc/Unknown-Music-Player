@@ -5,8 +5,8 @@
 #include <iostream>
 
 #include "loadCover.h"
-#include "../event/globalVar.h"
-#include "../logger/log.h"
+#include "globalVar.h"
+#include "log.h"
 
 
 void send_kitty_image(const std::string& encoded, size_t width,
@@ -112,7 +112,6 @@ void displayCover(const std::string& dir) {
     logger("img_w=" + std::to_string(img_w) +
        " img_h=" + std::to_string(img_h) +
        " channels=" + std::to_string(channels) +
-       " lb_width=" + std::to_string(lb_width) +
        " raw_byte_count=" + std::to_string(byte_count) +
        " encoded_size=" + std::to_string(encoded.size()));
 

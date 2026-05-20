@@ -10,11 +10,9 @@
 
 #include "song.h"
 
-#include "../ui/common.h"
+#include "globalVar.h"
 
-#include "../event/globalVar.h"
-
-#include "../logger/log.h"
+#include "log.h"
 
 std::string suffixes[] = {".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a"};
 

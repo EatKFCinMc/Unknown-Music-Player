@@ -3,8 +3,8 @@
 #include <thread>
 
 #include "globalVar.h"
-#include "../ui/render.h"
-#include "../logger/log.h"
+#include "render.h"
+#include "log.h"
 
 void event_listener() {
     while (!TERMINATE) {

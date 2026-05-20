@@ -2,8 +2,9 @@
 #define GLOBALVAR_H
 
 #include <string>
-#include <atomic>
-#include "../songlist/list.h"
+#include <queue>
+
+#include "list.h"
 
 // general data
 extern std::string title;
@@ -51,7 +52,8 @@ extern size_t list_artist_len;
 // flags
 extern bool cover_drawing;
 
-// event flags
+// event bus
+extern std::queue<int> event_bus;
 extern bool TERMINATE;
 extern bool KBHIT_PAUSE;
 extern bool PAUSE;

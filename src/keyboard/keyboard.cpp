@@ -8,9 +8,9 @@
 
 #include "miniaudio/miniaudio.h"
 
-#include "../event/events.h"
-#include "../logger/log.h"
-#include "../event/globalVar.h"
+#include "events.h"
+#include "log.h"
+#include "globalVar.h"
 
 // int kbhit() {
 //     termios oldt, newt;
