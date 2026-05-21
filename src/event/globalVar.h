@@ -2,17 +2,15 @@
 #define GLOBALVAR_H
 
 #include <string>
-#include <queue>
-
-#include "list.h"
+#include "../songlist/list.h"
 
 // general data
 extern std::string title;
 extern std::string artist;
 extern std::string album;
 extern std::string songPath;
-extern double total_time;
-extern double current_time;
+extern double song_len;
+extern double song_cursor;
 extern Playlist* list_ptr;
 
 // terminal data
@@ -20,6 +18,7 @@ extern size_t term_height;
 extern size_t term_width;
 extern size_t theme_color;
 extern std::string term_name;
+extern bool kitty_support;
 
 // layout
 extern size_t list_num;
@@ -52,8 +51,7 @@ extern size_t list_artist_len;
 // flags
 extern bool cover_drawing;
 
-// event bus
-extern std::queue<int> event_bus;
+// event flags
 extern bool TERMINATE;
 extern bool KBHIT_PAUSE;
 extern bool PAUSE;

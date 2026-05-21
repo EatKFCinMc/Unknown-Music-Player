@@ -103,8 +103,6 @@ void keyboard_listener() {
                     TERMINATE = true;
                     break;
                 case 'p':
-                    PAUSE = !PAUSE;
-                    break;
                 case ' ':
                     PAUSE = !PAUSE;
                     break;

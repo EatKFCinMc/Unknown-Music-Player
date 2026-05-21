@@ -11,6 +11,7 @@
 #include "events.h"
 #include "globalVar.h"
 #include "log.h"
+#include "config.h"
 
 int tall, wide;
 Playlist playlist;
@@ -49,6 +50,7 @@ void init(const std::string &dir = "") {
     keyboard_thread.join();
     event_thread.join();
 
+    write_to_config();
     showCursor();
     exitAltScr();
 }

@@ -11,6 +11,7 @@
 #include "song.h"
 
 #include "globalVar.h"
+#include "events.h"
 
 #include "log.h"
 
@@ -70,9 +71,9 @@ void Song::play() {
 
     float time_t;
     ma_sound_get_length_in_seconds(&sound, &time_t);
-    total_time = time_t;
+    song_len = time_t;
     time_t = 0;
-    current_time = 0;
+    song_cursor = 0;
     BAR_UPDATE = true;
 
     size_t framerate = ma_engine_get_sample_rate(&engine);
@@ -107,10 +108,10 @@ void Song::play() {
             break;
         }
         ma_sound_get_cursor_in_pcm_frames(&sound, &cursor);
-        current_time = static_cast<double>(cursor) / static_cast<double>(framerate);
-        if (current_time - time_t >= 1) {
+        song_cursor = static_cast<double>(cursor) / static_cast<double>(framerate);
+        if (song_cursor - time_t >= 1) {
             BAR_UPDATE = true;
-            time_t = static_cast<float>(current_time);
+            time_t = static_cast<float>(song_cursor);
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(20));

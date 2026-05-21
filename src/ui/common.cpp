@@ -19,12 +19,14 @@ void clearLine(int row, int col, int len) {
     for (int i = 0; i < len; i++) printf(" ");
 }
 
-void printAt(size_t col, size_t row, const std::string &s, bool border, size_t color) {
-    printf("\033[%lum\033[%lu;%luH%s\033[0m", color, row, col, s.c_str());
+void printAt(size_t col, size_t row, const std::string &s, bool border, size_t bg_color, size_t txt_color) {
+    if (bg_color) printf("\033[%lum", bg_color);
+    if (txt_color) printf("\033[%lum", txt_color);
+    printf("\033[%lu;%luH%s", row, col, s.c_str());
 
 	if (border) {
 		int len = s.length();
-        printf("\033[%lum\033[%lu;%luH%s", color, row - 1, col - 1, downRight);
+        printf("\033[%lu;%luH%s", row - 1, col - 1, downRight);
         for (int i = 0; i < len; i++) cout<<horiLine;
         cout<<downLeft;
         printf("\033[%lu;%luH%s", row, col - 1, vertiLine);
@@ -32,8 +34,9 @@ void printAt(size_t col, size_t row, const std::string &s, bool border, size_t c
         printf("\033[%lu;%luH%s", row + 1, col - 1, upRight);
         for (int i = 0; i < len; i++) cout<<horiLine;
         cout<<upLeft;
-		printf("\033[0m");
     }
+
+	printf("\033[0m");
 }
 
 void refreshBuffer() { fflush(stdout); }

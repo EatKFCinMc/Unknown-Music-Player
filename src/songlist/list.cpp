@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "globalVar.h"
+#include "events.h"
 
 #include "log.h"
 
@@ -34,7 +35,8 @@ void Playlist::loadFromPath(std::string dirPath) {
 void Playlist::playFromList () {
     if (playList.empty()) return;
 
-    SONG_UPDATE = true;
+    event_bus.push_front(SONG_UPDATE_EVENT);
+    // SONG_UPDATE = true;
     playList.front()->play();
     if (TERMINATE) return;
 
@@ -63,7 +65,8 @@ void Playlist::playNext () {
         auto temp = playList.front();
         playList.pop_front();
         playList.push_back(temp);
-        SONG_UPDATE = true;
+        event_bus.push_front(SONG_UPDATE_EVENT);
+        // SONG_UPDATE = true;
         logger("Playing next. Current song list length: " + std::to_string(playList.size()));
 
         playList.front()->play();
@@ -76,7 +79,8 @@ void Playlist::playPrev () {
         auto temp = playList.back();
         playList.pop_back();
         playList.push_front(temp);
-        SONG_UPDATE = true;
+        event_bus.push_front(SONG_UPDATE_EVENT);
+        // SONG_UPDATE = true;
         logger("Playing prev. Current song list length: " + std::to_string(playList.size()));
 
         playList.front()->play();

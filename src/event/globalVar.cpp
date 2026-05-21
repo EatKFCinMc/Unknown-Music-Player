@@ -1,27 +1,27 @@
 #include "globalVar.h"
 
-#include <unistd.h>
-#include <sys/ioctl.h>
 #include <csignal>
 #include <cstring>
 
 #include "log.h"
-#include "events.h"
+#include "term_util.h"
 
 // song info
 std::string title;
 std::string artist;
 std::string album;
 std::string songPath;
-double total_time = 0;
-double current_time = 0;
+double song_len = 0;
+double song_cursor = 0;
 Playlist* list_ptr = nullptr;
+int list_cursor = 0;
 
 // terminal data
 size_t term_height = 0;
 size_t term_width = 0;
 size_t theme_color = 0;
 std::string term_name;
+bool kitty_support = false;
 
 // layout
 size_t list_num;
@@ -50,12 +50,12 @@ size_t rb_pos_height;
 size_t list_height;
 size_t list_title_len;
 size_t list_artist_len;
+int list_start_cursor;
 
 // flags
 bool cover_drawing = false;
 
 // event flags
-std::queue<int> event_bus;
 bool TERMINATE = false;
 bool KBHIT_PAUSE = false;
 bool PAUSE = false;
@@ -71,7 +71,6 @@ bool BAR_UPDATE = false;
 
 
 void sigwinch_handler(int sig) {
-    event_bus.push(WINDOW_CHANGE);
     WINDOW_CHANGE = true;
 }
 
@@ -79,34 +78,23 @@ void sigint_handler(int sig) {
     TERMINATE = true;
 }
 
-void updateWinSize() {
-    winsize w{};
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    term_height = w.ws_row;
-    term_width = w.ws_col;
-}
-
-void get_term_name() {
-    const char *term = std::getenv("TERM");
-    term_name = term == nullptr ? "" : term;
-}
-
 void init_globalVar() {
-    total_time = 0;
-    current_time = 0;
+    song_len = 0;
+    song_cursor = 0;
     list_ptr = nullptr;
     theme_color = 0;
     get_term_name();
     reload_layoutVar();
+    kitty_support = detect_kitty_support();
 
-    struct sigaction sa;
+    struct sigaction sa{};
     std::memset(&sa, 0, sizeof(sa));
     sa.sa_handler = sigwinch_handler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
     sigaction(SIGWINCH, &sa, nullptr);
 
-    struct sigaction sb;
+    struct sigaction sb{};
     std::memset(&sb, 0, sizeof(sb));
     sb.sa_handler = sigint_handler;
     sigemptyset(&sb.sa_mask);

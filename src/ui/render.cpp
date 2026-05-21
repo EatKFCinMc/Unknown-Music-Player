@@ -74,6 +74,16 @@ void draw_list() {
     // printAt(rb_pos_inner, 2, temp_title);
 }
 
+void draw_cursor() {
+    std::string title_t = list_ptr->at(0)->getTitle();
+    std::string temp_title = title_t.substr(0, title_t.length() > list_title_len ? list_title_len : title_t.length());
+    printAt(rb_pos_inner, 0 + rb_pos_height, temp_title, false, 107, 30);
+
+    std::string artist_t = list_ptr->at(0)->getArtist();
+    std::string temp_artist = artist_t.substr(0, artist_t.length() > list_artist_len ? list_artist_len : artist_t.length());
+    printAt(rb_pos_inner + list_title_len + 3, 0 + rb_pos_height, temp_artist, false, 107, 30);
+}
+
 void draw_metadata() {
     std::string space;
     for (size_t i = 0; i < lb_width_inner; i++)
@@ -95,15 +105,6 @@ void draw_metadata() {
         printAt(3, album_row, temp_album);
     }
 }
-
-std::string milisec_to_min_string(size_t milisec) {
-    size_t sec = milisec / 1000;
-    size_t min = sec / 60;
-    sec = sec % 60;
-    std::string res = std::to_string(min) + ":" + std::to_string(sec);
-    return res;
-}
-
 
 std::string sec_to_min_string(double sec) {
     size_t min = sec / 60;
@@ -130,7 +131,7 @@ void draw_bar() {
     printAt(4, lb_bar_pos + 2, space);
     printAt(4, lb_bar_pos + 3, space);
 
-    size_t progress_chunk = static_cast<size_t>(current_time / total_time * static_cast<int>(lb_bar_len)) ? 0 : !total_time;
+    size_t progress_chunk = static_cast<size_t>(song_cursor / song_len * static_cast<int>(lb_bar_len)) ? 0 : song_len != 0;
     std::string line_t;
     for (size_t i = 0; i < progress_chunk; i++)
         line_t += barThick;
@@ -138,8 +139,8 @@ void draw_bar() {
         line_t += barEmpty;
     printAt(4, lb_bar_pos + 2, line_t);
 
-    std::string curr_time_t = sec_to_min_string(current_time);
-    std::string total_time_t = sec_to_min_string(total_time);
+    std::string curr_time_t = sec_to_min_string(song_cursor);
+    std::string total_time_t = sec_to_min_string(song_len);
     printAt(4, lb_bar_pos + 3, curr_time_t);
     printAt(lb_width - 2 - total_time_t.length(), lb_bar_pos + 3, total_time_t);
 }
@@ -168,6 +169,11 @@ void list_render() {
     logger("list_render initiated");
     clean_list();
     draw_list();
+    draw_cursor();
+}
+
+void cursor_render() {
+    draw_cursor();
 }
 
 void full_render() {
