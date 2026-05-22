@@ -64,6 +64,12 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    if (!std::filesystem::exists(fileStr)) {
+        printf("Illgal path or path not exist\n");
+        return 0;
+    }
+
+    root_dir = fileStr;
     init(fileStr);
     return 0;
 }

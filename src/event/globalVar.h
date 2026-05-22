@@ -5,6 +5,7 @@
 #include "../songlist/list.h"
 
 // general data
+extern std::string root_dir;
 extern std::string title;
 extern std::string artist;
 extern std::string album;
@@ -12,6 +13,7 @@ extern std::string songPath;
 extern double song_len;
 extern double song_cursor;
 extern Playlist* list_ptr;
+extern int list_cursor;
 
 // terminal data
 extern size_t term_height;
@@ -47,6 +49,7 @@ extern size_t rb_pos_height;
 extern size_t list_height;
 extern size_t list_title_len;
 extern size_t list_artist_len;
+extern int list_start_cursor;
 
 // flags
 extern bool cover_drawing;

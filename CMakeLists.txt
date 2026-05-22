@@ -25,6 +25,8 @@ add_executable(ump
         src/config/config.cpp
         src/ui/term_util.h
         src/ui/term_util.cpp
+        src/config/cache.h
+        src/config/cache.cpp
 )
 
 target_include_directories(ump PRIVATE

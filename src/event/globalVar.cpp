@@ -7,6 +7,7 @@
 #include "term_util.h"
 
 // song info
+std::string root_dir;
 std::string title;
 std::string artist;
 std::string album;

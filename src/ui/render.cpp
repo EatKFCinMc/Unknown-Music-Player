@@ -131,7 +131,7 @@ void draw_bar() {
     printAt(4, lb_bar_pos + 2, space);
     printAt(4, lb_bar_pos + 3, space);
 
-    size_t progress_chunk = static_cast<size_t>(song_cursor / song_len * static_cast<int>(lb_bar_len)) ? 0 : song_len != 0;
+    size_t progress_chunk = song_len != 0 ? static_cast<size_t>(song_cursor / song_len * static_cast<double>(lb_bar_len)) : 0;
     std::string line_t;
     for (size_t i = 0; i < progress_chunk; i++)
         line_t += barThick;
