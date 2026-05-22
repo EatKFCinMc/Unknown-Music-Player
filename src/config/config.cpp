@@ -18,7 +18,7 @@ void write_to_config() {
         std::filesystem::create_directory(config_dir);
     logger("Writing config to: " + config_dir);
 
-    config_dir += "ump.conf";
+    config_dir += "/ump.conf";
     if (std::filesystem::exists(config_dir))
         std::filesystem::remove(config_dir);
 
@@ -45,7 +45,7 @@ void load_from_config() {
         std::filesystem::create_directory(config_dir);
     logger("Writing config to: " + config_dir);
 
-    config_dir += "ump.conf";
+    config_dir += "/ump.conf";
     if (!std::filesystem::exists(config_dir)) {
         logger("Config file not found");
         return;
@@ -58,9 +58,10 @@ void load_from_config() {
     }
 
     std::string buffer;
-    std::getline(conf_file, root_dir);
+    std::getline(conf_file, buffer);
+    root_dir = buffer;
     std::getline(conf_file, buffer);
     list_cursor = stoi(buffer);
-    std::getline(conf_file, root_dir);
+    std::getline(conf_file, buffer);
     list_start_cursor = stoi(buffer);
 }

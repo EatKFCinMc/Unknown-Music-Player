@@ -27,11 +27,11 @@ void init_window() {
 }
 
 
-void init(const std::string &dir = "") {
+void init() {
     std::ios::sync_with_stdio(true);
     log_init();
     init_globalVar();
-    playlist.loadFromPath(dir);
+    playlist.loadFromPath(root_dir);
     list_ptr = &playlist;
     reload_metadata();
     init_window();
@@ -40,12 +40,14 @@ void init(const std::string &dir = "") {
     std::thread keyboard_thread(keyboard_listener);
     std::thread event_thread(event_listener);
 
-    if (std::filesystem::exists(dir)) {
-        playlist.playFromList();
-    } else {
-        printAt(term_width / 2 - 16, term_height / 2, "Error: No such file or directory", true);
-        sleep(3);
-    }
+    playlist.playFromList();
+
+    // if (std::filesystem::exists(dir)) {
+    //     playlist.playFromList();
+    // } else {
+    //     printAt(term_width / 2 - 16, term_height / 2, "Error: No such file or directory", true);
+    //     sleep(3);
+    // }
 
     keyboard_thread.join();
     event_thread.join();
@@ -57,19 +59,23 @@ void init(const std::string &dir = "") {
 
 
 int main(int argc, char *argv[]) {
+    // loading root_dir from config
+    load_from_config();
     std::string fileStr;
-    if (argc == 2) fileStr = argv[1];
-    else {
-        printf("Usage: ump <audio_file_path>\n");
+
+    if (argc == 2) {
+        fileStr = argv[1];
+        if (!std::filesystem::exists(fileStr)) {
+            printf("Illgal path or path not exist\n");
+            return 0;
+        }
+        root_dir = fileStr;
+    }
+    else if (root_dir.empty()) {
+        printf("Usage: ump <audio_file_or_dir_path>\n");
         return 0;
     }
 
-    if (!std::filesystem::exists(fileStr)) {
-        printf("Illgal path or path not exist\n");
-        return 0;
-    }
-
-    root_dir = fileStr;
-    init(fileStr);
+    init();
     return 0;
 }
