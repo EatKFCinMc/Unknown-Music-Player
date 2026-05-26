@@ -34,6 +34,7 @@ void log_thread(const std::string &message) {
 }
 
 void logger(const std::string &message) {
-    std::thread log_t(log_thread, message);
-    log_t.detach();
+    log_thread(message);
+    // std::thread log_t(log_thread, message);
+    // log_t.detach();
 }
