@@ -76,6 +76,14 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    if (!std::filesystem::exists(root_dir)) {
+        printf("Previous saved folder can't be found\n"
+               "Please initiate again.\n");
+        root_dir = "";
+        write_to_config();
+        return 0;
+    }
+
     init();
     return 0;
 }
