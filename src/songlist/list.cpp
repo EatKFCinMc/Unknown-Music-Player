@@ -1,30 +1,44 @@
 #include "list.h"
 
 #include <filesystem>
+#include <vector>
 
 #include "globalVar.h"
 #include "events.h"
-
 #include "log.h"
 
-Playlist::Playlist(std::string dirPath) {
-    if (!dirPath.empty()) {
-        loadFromPath(dirPath);
+struct load_unit {
+    std::string path;
+    Song* song;
+};
+
+Playlist::Playlist(std::string dir_path) {
+    if (!dir_path.empty()) {
+        loadFromPath(dir_path);
     }
 }
 
-void Playlist::loadFromPath(std::string dirPath) {
-    if (!std::filesystem::exists(dirPath)) return;
-    if (std::filesystem::is_directory(dirPath)) {
-        for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
-            Song *s = new Song(entry.path().string());
-            if (s->is_available()) {
-                playList.push_back(s);
-                amount++;
-            }
+void Playlist::loadFromPath(std::string dir_path) {
+    if (!std::filesystem::exists(dir_path)) return;
+
+    if (std::filesystem::is_directory(dir_path)) {
+        std::vector<load_unit> load_list;
+        for (const auto &entry : std::filesystem::recursive_directory_iterator(dir_path))
+            load_list.push_back(load_unit(entry.path().string(), nullptr));
+
+        #pragma omp parallel for schedule(dynamic, 8)
+        for (size_t i = 0; i < load_list.size(); i++)
+            load_list[i].song = new Song(load_list[i].path);
+
+        for (const auto &entry : load_list) {
+            if (entry.song == nullptr) continue;
+            if (!entry.song->is_available()) continue;
+            playList.push_back(entry.song);
+            amount++;
         }
+
     } else {
-        Song *s = new Song(dirPath);
+        Song *s = new Song(dir_path);
         if (s->is_available()) {
             playList.push_back(s);
             amount++;
@@ -56,7 +70,6 @@ void Playlist::playFromList () {
 }
 
 void Playlist::shuffle () {
-    current = 0;
 }
 
 
@@ -97,6 +110,12 @@ void Playlist::addSong (Song *s) {
 Song* Playlist::getFront() {
     if (!playList.empty())
         return playList.front();
+    return nullptr;
+}
+
+Song* Playlist::get_curr() {
+    if (!playList.empty())
+        return playList[list_cursor];
     return nullptr;
 }
 

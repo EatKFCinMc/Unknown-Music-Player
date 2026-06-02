@@ -10,16 +10,16 @@ bool is_music_file(std::string filePath);
 class Playlist {
     std::deque<Song*> playList;
     size_t amount = 0;
-    size_t current = 0;
 public:
-    explicit Playlist (std::string dirPath = "");
-    void loadFromPath (std::string dirPath);
+    explicit Playlist (std::string dir_path = "");
+    void loadFromPath (std::string dir_path);
     void playFromList ();
     void shuffle ();
     void playNext ();
     void playPrev ();
     void addSong (Song *s);
     Song* getFront();
+    Song* get_curr();
     Song* at(size_t index);
     size_t size();
 };

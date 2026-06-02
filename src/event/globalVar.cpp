@@ -153,10 +153,10 @@ void reload_layoutVar() {
 }
 
 void reload_metadata() {
-    title = list_ptr->getFront()->getTitle();
-    artist = list_ptr->getFront()->getArtist();
-    album = list_ptr->getFront()->getAlbum();
-    songPath = list_ptr->getFront()->getSongPath();
+    title = list_ptr->get_curr()->getTitle();
+    artist = list_ptr->get_curr()->getArtist();
+    album = list_ptr->get_curr()->getAlbum();
+    songPath = list_ptr->get_curr()->getSongPath();
 
     std::string msg = std::string("Metadata reloaded:\n") +
     "title = " + title + "\n" +

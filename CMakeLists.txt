@@ -21,12 +21,10 @@ add_executable(ump
     src/logger/log.cpp
     src/cover/loadCover.cpp
     src/cover/showCover.cpp
-        src/config/config.h
-        src/config/config.cpp
-        src/ui/term_util.h
-        src/ui/term_util.cpp
-        src/config/cache.h
-        src/config/cache.cpp
+    src/config/config.h
+    src/config/config.cpp
+    src/ui/term_util.h
+    src/ui/term_util.cpp
 )
 
 target_include_directories(ump PRIVATE
@@ -60,3 +58,8 @@ target_link_libraries(ump PRIVATE
     m
     tag
 )
+
+find_package(OpenMP COMPONENTS CXX)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(ump PRIVATE OpenMP::OpenMP_CXX)
+endif()
