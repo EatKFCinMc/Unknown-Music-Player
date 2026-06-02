@@ -36,6 +36,7 @@ void init() {
     reload_metadata();
     init_window();
     init_keyboard();
+    PAUSE = true;
 
     std::thread keyboard_thread(keyboard_listener);
     std::thread event_thread(event_listener);
