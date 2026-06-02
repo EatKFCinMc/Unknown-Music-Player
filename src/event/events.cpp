@@ -1,7 +1,6 @@
 #include "events.h"
 
 #include <thread>
-#include <oneapi/tbb/profiling.h>
 
 #include "globalVar.h"
 #include "render.h"
