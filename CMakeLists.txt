@@ -21,9 +21,7 @@ add_executable(ump
     src/logger/log.cpp
     src/cover/loadCover.cpp
     src/cover/showCover.cpp
-    src/config/config.h
     src/config/config.cpp
-    src/ui/term_util.h
     src/ui/term_util.cpp
 )
 
@@ -32,13 +30,6 @@ target_include_directories(ump PRIVATE
     ${PC_CHAFA_INCLUDE_DIRS}
     ${PC_GLIB_INCLUDE_DIRS}
     ${PC_TAGLIB_INCLUDE_DIRS}
-    src/cover
-    src/event
-    src/keyboard
-    src/logger
-    src/songlist
-    src/ui
-    src/config
 )
 
 target_compile_options(ump PRIVATE -Wall)

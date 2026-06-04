@@ -2,7 +2,7 @@
 #define GLOBALVAR_H
 
 #include <string>
-#include "../songlist/list.h"
+#include "list.h"
 
 // general data
 extern std::string root_dir;
